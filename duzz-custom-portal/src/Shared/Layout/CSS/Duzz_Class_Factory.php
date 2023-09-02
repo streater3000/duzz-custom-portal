@@ -528,7 +528,7 @@ textarea{
   width: 100%;
   background:#ffffff;
   margin-bottom:5px;
-  border-radius: 40px;
+  border-radius: 20px;
   max-width: 2500px;
   border: 3px solid #ff423a!important;
 }
@@ -540,7 +540,7 @@ textarea{
     display: block;
     color: #fff;
     min-height: 35px;
-    border-radius: 40px;
+    border-radius: 20px;
 
 }
 
@@ -714,7 +714,7 @@ outline: none;
     transition: 0.3s;
     font-size: 17px!important;
     background-color: #5fe38b;
-    border-radius: 50px !important;
+    border-radius: 20px !important;
     font-weight: 800;
 
     position: relative !important;
@@ -739,7 +739,7 @@ background-color: #000!important;
 
 .staff-menu-item a {
   color: #000;
-  border-radius: 0 30px 30px 0;
+  border-radius: 0 20px 20px 0;
   font-size: 25px;
 
   font-weight: 500;
@@ -1194,7 +1194,7 @@ input[type=submit] {
     color: #ffffff!important;
     font-size: 1em;
     padding: 10px 40px;
-    border-radius: 30px!important;
+    border-radius: 20px!important;
     font-size: 17px!important;
     font-weight: 800!important;
     min-width: 20%;
@@ -1310,7 +1310,7 @@ textarea{
     background: #fff;
     cursor: auto;
     white-space: normal;
-    border-radius: 30px;
+    border-radius: 20px;
 }
 
 @media only screen and (max-width: 650px){
@@ -1393,7 +1393,7 @@ right: 60px;
     font-size: 17px;
     color: #fff;
     background-color: #5fe38b;
-    border-radius: 50px!important;
+    border-radius: 20px!important;
     font-size: 25px !important;
     font-weight: 800;
     position: relative!important;
@@ -1437,7 +1437,7 @@ float: left;
     margin: 5px;
     transition: 0.3s;
     font-size: 17px;
-    border-radius: 30px;
+    border-radius: 20px;
     font-size: 25px;
     font-weight: 800;
 
@@ -1445,7 +1445,7 @@ float: left;
       border: 3px solid white;
   background-color: #fff;
 color: #5fe38b;
-border-radius: 35px;
+border-radius: 20px;
 z-index: 0;
 border: 5px solid #5fe38b;
 }
@@ -1493,6 +1493,46 @@ border: 5px solid #5fe38b;
 
 /*Comments*/
 
+
+.comment__avatar img {
+    /* Your styles here */
+    width: 50px; /* Example */
+    height: 50px; /* Example */
+    border-radius: 50%; /* Example to make it round */
+    margin-right: 10px;
+}
+
+.comment__info-container {
+    display: left;
+    align-items: center;
+}
+
+.comment__avatar, 
+.comment__info-container {
+    display: inline-block;
+
+}
+
+.comment__avatar {
+  position: relative;
+}
+
+.comment__avatar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  z-index: 1;
+}
+
+.comment__avatar > img {
+  position: relative;
+  z-index: 0;
+}
+
 /* @ notification stylinh */
 .chatfeed-title {
     margin-top: 0px;
@@ -1518,7 +1558,7 @@ border: 5px solid #5fe38b;
                 margin: 1rem 0;
                 padding: 10px 1rem .1rem 2rem;
                                 border: 3px solid #ff423a;
-                border-radius:  0 30px 30px 0;
+                border-radius:  0 20px 20px 0;
                 background: white;
             }
             .comment__author, .mention__author {
@@ -1557,7 +1597,7 @@ border: 5px solid #5fe38b;
             .comment--role_duzz_bot, .mention--role_duzz_bot {
                 border-color: #347EFF;
                 background-color: #347EFF;
-                border-radius: 30px;
+                border-radius: 20px;
                 color: white;
             }
 
@@ -1577,7 +1617,7 @@ border: 5px solid #5fe38b;
             }
             .comment--role_administrator, .mention--role_administrator {
                 border: 3px solid #347EFF;
-                border-radius: 0 30px 30px 0;
+                border-radius: 0 20px 20px 0;
                 background-color: white;
             }
             .comment--role_administrator .comment__author-role, .mention--role_administrator .mention__author-role {
@@ -1896,7 +1936,7 @@ margin-bottom:  50px;
     width: 100%;
     background: #ffffff;
     margin-bottom: 5px;
-    border-radius: 40px;
+    border-radius: 20px;
     max-width: 2500px;
     border: 3px solid #ff423a !important;
 }
@@ -1909,7 +1949,7 @@ margin-bottom:  50px;
     display: block;
     color: #fff;
     min-height: 35px;
-    border-radius: 40px;
+    border-radius: 20px;
 }
 
 
@@ -2119,7 +2159,7 @@ input[readonly], select[disabled] {
 
 .invoice-estimate-table-container {
   border: 3px solid #347eff;
-  border-radius: 0 0 30px 30px;
+  border-radius: 0 0 20px 20px;
   padding: 20px;
 }
 @media only screen and (max-width:650px) {

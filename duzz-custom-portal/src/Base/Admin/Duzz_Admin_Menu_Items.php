@@ -178,7 +178,7 @@ public static function settings_list_data($listType) {
             return array(
                 'ACF_Key_1' => 'field_6399e6ff0cf58',
                 'ACF_Key_2' => 'field_61eead1406b70',
-                'ACF_Key_3' => 'field_6399e6ff0cf58',
+                'ACF_Key_3' => 'field_643b0cfbcf72c',
             );
         case 'admin_form_id':
             return array(

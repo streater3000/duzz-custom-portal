@@ -335,7 +335,7 @@ $project_id = $tracking_id;
 				
 
 			$customer_address1 = ucwords(strtolower($customer_address['address1'])) ?? '';
-				$customer_address2 = ucwords(strtolower($customer_address2['address2'])) ?? '';
+				$customer_address2 = ucwords(strtolower($customer_address['address2'])) ?? '';
 				$customer_city = ucwords(strtolower($customer_address['city'])) ?? '';
 				$customer_state = strtoupper($customer_address['state']) ?? '';
 				$customer_zip = $customer_address['postal'] ?? '';
@@ -381,8 +381,6 @@ $project_id = $tracking_id;
 				'email_address'   => $admin_email_settings,
 				'subject'         => 'Duzz ALERT: New Customer',
 				'content'         => 'A customer just created a new project here: ',
-				'tagged_by'       => $tagged_by,
-				'first_name'      => $admin_name,
 				'project_url'        => site_url( '/view-project/?project_id=' . $project_id ),
 			];
 

@@ -280,6 +280,12 @@ public static function duzz_get_projectname( $project_id ) {
 	return $customer_name;
 }
 
+public static function duzz_get_projectemail($project_id) {
+    $project_id = absint($project_id);
+    $email = self::duzz_get_field('customer_email', $project_id) ?: '';
+    return $email;
+}
+
 }
 
 

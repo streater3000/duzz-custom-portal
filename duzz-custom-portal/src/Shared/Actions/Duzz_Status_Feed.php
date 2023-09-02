@@ -210,11 +210,24 @@ public function add_project_update() {
             $email = new Duzz_Email('project-updated', $data);
             $email->send();
 
-			$url = site_url('/project/') . '?project_id=' . $project_id . '&project-updated=true#status_feed';
+			$current_path = $_SERVER['REQUEST_URI'];  // Get current URL path
+			$base_url = site_url() . $current_path;  // Concatenate with the base URL
+
+				// Arguments you want to add
+				$args = array(
+   					 'project_id' => $project_id,
+   					 'project-updated' => 'true',
+						);
+
+				// Build the full URL with added arguments
+			$url = add_query_arg($args, $base_url);
+
+			// Add fragment
+			$url .= '#status_feed';
+
+			// Redirect
 			wp_redirect($url);
 			exit;
-
-
 
         }
     }

@@ -132,64 +132,74 @@ private function get_args() {
 
 
 private function create_comment_div($comment, $cu_role) {
-        $display_data = $this->get_comment_display_data($comment, $cu_role);
-        $display_name = $display_data['display_name'];
-        $display_role = $display_data['display_role'];
-        $newdatetime = $display_data['newdatetime'];
-        $comment_role = $display_data['comment_role'];
+    $display_data = $this->get_comment_display_data($comment, $cu_role);
+    $display_name = $display_data['display_name'];
+    $display_role = $display_data['display_role'];
+    $newdatetime = $display_data['newdatetime'];
+    $comment_role = $display_data['comment_role'];
+    $email = $display_data['email'];
 
-        $comment_div = new Duzz_Return_HTML('div', ['class' => "comment comment--role_{$comment_role}", 'id' => "comment--id_{$comment->comment_ID}"]);
+    $comment_div = new Duzz_Return_HTML('div', ['class' => "comment comment--role_{$comment_role}", 'id' => "comment--id_{$comment->comment_ID}"]);
+    $avatar = get_avatar($email); 
 
-        $comment_content = wpautop($comment->comment_content);
+    $comment_content = wpautop($comment->comment_content);
 
-        $comment_div->addChild('div', ['class' => 'comment__author-role'], $display_role);
-        $comment_div->addChild('div', ['class' => 'comment__author'], $display_name);
-        $comment_div->addChild('div', ['class' => 'comment__date'], $newdatetime);
-        $comment_div->addChild('div', ['class' => 'comment__content'], $comment_content);
+if ($comment_role != 'no_role' && $comment_role != 'duzz_bot') {
+    $avatar = get_avatar($email);
+    $comment_div->addChild('div', ['class' => 'comment__avatar'], $avatar);
+}
 
-        if (empty($this->post_id)) {
-            $link_attributes = array(
-                'href' => site_url('/project/?project_id=') . $comment->comment_post_ID,
-                'target' => '_blank',
-                'rel' => 'noopener noreferrer',
-            );
-            $link_text = 'View Project →';
-            $comment_div->addChild('a', $link_attributes, $link_text);
-        }
+    // Create a new container div for flex alignment
+    $info_container = new Duzz_Return_HTML('div', ['class' => 'comment__info-container']);
 
-        return $comment_div;
+    $info_container->addChild('div', ['class' => 'comment__author-role'], $display_role);
+    $info_container->addChild('div', ['class' => 'comment__author'], $display_name);
+    $info_container->addChild('div', ['class' => 'comment__date'], $newdatetime);
+
+            $comment_div->addChild($info_container);
+
+    $comment_div->addChild('div', ['class' => 'comment__content'], $comment_content);
+
+    if (empty($this->post_id)) {
+        $link_attributes = array(
+            'href' => site_url('/project/?project_id=') . $comment->comment_post_ID,
+            'target' => '_blank',
+            'rel' => 'noopener noreferrer',
+        );
+        $link_text = 'View Project →';
+        $comment_div->addChild('a', $link_attributes, $link_text);
     }
+
+    return $comment_div;
+}
 
 
 private function get_comment_display_data($comment, $cu_role) {
-
-        $author = get_user_by( 'id', $comment->user_id );
-        $role = $this->role->get_user_role_by_id( $comment->user_id );
-        $display_name = 'Empty';
-        $display_role = 'Empty';
+    $author = get_user_by('id', $comment->user_id);
+    $role = $this->role->get_user_role_by_id($comment->user_id);
+    $display_name = 'Empty';
+    $display_role = 'Empty';
+    $email = '';  // Initialize the email variable
 
     // Get the title of the project type with 'company_id' => 9909
     $company_title = get_the_title(9909);
-
 
     // Get the name of the User ID 262
     $user_id_262_name = trim(Duzz_Helpers::duzz_get_name(262));
 
     if (in_array($cu_role, ['duzz_customer', 'no_role'])) {
-
-
-        if (in_array($role, ['duzz_admin'])) {
+        if (in_array($role, ['duzz_admin', 'administrator'])) {
             $display_role = $company_title ?: 'Admin';
             $display_name = trim(Duzz_Helpers::duzz_get_name($comment->user_id)) ?: $user_id_262_name;
-        } else if ($role == 'administrator') {
-            $display_role = $company_title ?: 'Owner';
-            $display_name = trim(Duzz_Helpers::duzz_get_name($comment->user_id)) ?: $user_id_262_name;
+            $email = $author->user_email;  // Retrieve the email
         } else if ($role == 'no_role') {
             $display_role = 'Customer';
             $display_name = 'You' ?: 'Name Missing';
+            $email = Duzz_Helpers::duzz_get_projectemail($comment->comment_post_ID);
         } else {
             $display_name = trim(Duzz_Helpers::duzz_get_name($comment->user_id)) ?: $user_id_262_name;
             $display_role = $company_title;
+            $email = $author->user_email;  // Retrieve the email
         }
     }
 
@@ -197,12 +207,11 @@ private function get_comment_display_data($comment, $cu_role) {
         if ($role == 'no_role') {
             $display_role = 'Customer';
             $display_name = trim(Duzz_Helpers::duzz_get_projectname($comment->comment_post_ID)) ?: 'Missing Name';
-        } else if ($role == 'duzz_customer') {
-            $display_role = 'Current Customer';
-            $display_name = trim(Duzz_Helpers::duzz_get_name($comment->user_id)) ?: 'Missing Name';
+            $email = Duzz_Helpers::duzz_get_projectemail($comment->comment_post_ID);
         } else {
             $display_role = Duzz_Helpers::duzz_get_role_name($role);
             $display_name = trim(Duzz_Helpers::duzz_get_name($comment->user_id)) ?: $user_id_262_name;
+            $email = $author->user_email;  // Retrieve the email
         }
     }
 
@@ -214,6 +223,8 @@ private function get_comment_display_data($comment, $cu_role) {
         'display_role' => $display_role,
         'newdatetime' => $newdatetime,
         'comment_role' => $role,
+        'email' => $email,  // Add email to the returned array
     ];
 }
+
 }
