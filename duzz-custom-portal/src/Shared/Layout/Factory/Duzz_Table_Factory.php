@@ -60,6 +60,7 @@ public function addColumn($name, $options) {
         $this->rowClasses = $rowClasses;
         $this->post_url = $post_url;
         
+        do_action('duzz_table_factory_before_render_scripts', $this);
         $this->addRowClickHandlerScript();
         add_action('table_factory_add_row_click_handler', array($this, 'addRowClickHandlerScript'));
 
@@ -155,7 +156,8 @@ public function addColumn($name, $options) {
                         'name' => $column_name,
                         'type' => 'text',
                         'placeholder' => $formatted_label,  
-                        'class' => 'custom-post-field-class' 
+                        'class' => 'custom-post-field-class',
+                        'data-duzz-required' => ''   
                     ));
                     $header_row->addChild('th', array('class' => $column_class), $input);
     }

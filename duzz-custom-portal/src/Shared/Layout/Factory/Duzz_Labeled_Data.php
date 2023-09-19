@@ -30,6 +30,8 @@ public function render_all_fields() {
         $this->field_key = $field_key;
         $this->title = Duzz_Format_Label::format($field_key);
         $container->addChild($this->render()); // No need to specify div and attributes
+
+
     }
 
     return $container;

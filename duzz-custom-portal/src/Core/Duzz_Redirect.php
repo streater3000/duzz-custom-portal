@@ -18,8 +18,24 @@ class Duzz_Redirect {
         add_filter('the_content', [$this, 'updates_no_project_redirect'], 11);
         add_action('the_content', [$this, 'duzz_hide_view_project'], 11);
         add_action('the_content', [$this, 'duzz_hide_view_team_member']);
+        add_filter('login_redirect', [$this, 'custom_login_redirect'], 10, 3);
     }
 
+
+public function custom_login_redirect($redirect_to, $request, $user) {
+    // Check the toggle
+    $is_toggle_on = Duzz_Get_Data::get_form_id('settings_toggle_redirect_field_data', 'redirect_to_workspace_on_login') == 1;
+
+    if ($is_toggle_on) {
+        // If the toggle is on, redirect to /workspace/
+        return home_url('/workspace/');
+    }
+
+    // If the toggle is off, proceed as usual
+    return $redirect_to;
+}
+
+        
 public function updates_no_project_redirect($content) {
     if (!is_page(9925)) {
         return $content;

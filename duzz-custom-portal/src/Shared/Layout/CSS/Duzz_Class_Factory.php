@@ -145,7 +145,7 @@ class Duzz_Class_Factory {
             }
 }
 
-#message {
+textarea#message {
   width: 100%;
   height: 100px;
 }
@@ -161,6 +161,50 @@ function duzz_dynamic_css() {
  <style type="text/css">
 
 
+  .duzz-dismiss-icon {
+        display: inline-block;
+        cursor: pointer;
+        font-size: 30px;
+        color: #ff423a;
+                }
+
+.duzz-custom-notification {
+
+  padding: 10px;
+  border: 3px solid #ff423a;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+
+}
+.duzz-custom-notification::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.duzz-message-notification-container{
+    min-width: 90%;
+}
+
+.duzz-custom-notification {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.duzz-dismiss-icon {
+    cursor: pointer;
+    flex-shrink: 0; /* Prevents shrinking if there's less space */
+}
+
+
+@media (max-width: 850px){
+    .duzz-custom-notification {
+  margin-left: 20px;
+  width: 95%;
+}
+}
 
 .featherlight-content p{
     margin-bottom: 10px!important;
@@ -473,7 +517,7 @@ p{
 }
 
 textarea{
-    margin-bottom: 20px!important;
+    margin-bottom: 0px!important;
 }
 
 .status-feed-form textarea{
@@ -698,6 +742,10 @@ h5{
 .staff-page-flex ul{
     margin: 0 0 0 0!important;
     position: fixed!important;
+}
+
+.content-container {
+  min-height: 300px;
 }
 /*sidebar menu design*/
 

@@ -72,14 +72,22 @@ class Duzz_Layout {
                     $container = $comment_factory->create_list();
                     break;
 
-                case 9923:
-                    // Instantiate the List_Projects class
-                    $table_factory = new Pages\Duzz_List_Factory("project_list", "project", "table", "pagenum", 10, "settings_list_projects_field_data", "selected_columns");
-                    $table_factory->add_list_args(null, 'archived', 0);
+case 9923:
+    // Instantiate the List_Projects class
+    $table_factory = new Pages\Duzz_List_Factory("project_list", "project", "table", "pagenum", 10, "settings_list_projects_field_data", "selected_columns");
+    $table_factory->add_list_args(null, 'archived', 0);
 
-                    do_action('before_create_list', $table_factory, $page_id);
-                    $container = $table_factory->create_list();
-                    break;
+    do_action('before_create_list', $table_factory, $page_id);
+    
+    // Start buffering for the notification
+    ob_start();
+    do_action('duzz_display_notification');
+    $notification_output = ob_get_clean();
+    
+    $container_content = $notification_output . $table_factory->create_list();
+    $container = $container_content;
+    break;
+
 
                 case 9920:
                     // Instantiate the List_Projects class
@@ -96,6 +104,7 @@ class Duzz_Layout {
          if (isset($container)) {
             $content_container = new Duzz_Return_HTML('div', ['class' => 'content-container']);
             $content_container->addChild('div', [], $container);
+
             $page_content->addChild('div', ['class' => 'content-container'], $content_container->render());
         }
 

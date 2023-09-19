@@ -7,11 +7,11 @@ use Duzz\Base\Admin\Factory\Duzz_Select2_Enqueue;
 
 class Duzz_Admin {
     private static $instance = null;
-    private $menu_slug; // Add this property
+    private $menu_slug;
 
-    public static function getInstance($plugin_file, $menu_slug) { // Modify this method to accept the menu slug
+    public static function getInstance($plugin_file, $menu_slug) { 
         if (self::$instance === null) {
-            self::$instance = new self($menu_slug); // Pass the slug to the constructor
+            self::$instance = new self($menu_slug); 
         }
         return self::$instance;
     }

@@ -50,6 +50,7 @@ class Duzz_Plugin_Handler
         new Duzz_Emails();
         new Duzz_ACF_Sync();
         add_action('init', [$this, 'initialize_stripe_create']);
+        new Duzz_NotificationFetcher();
 
     }
        public function initialize_stripe_create() {

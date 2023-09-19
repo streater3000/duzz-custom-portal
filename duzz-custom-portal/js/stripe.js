@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
         openPopup(stripe, amount, clientSecret, dataProjectID);
     });
 
-
     function openPopup(stripe, amount, clientSecret, projectId) {
         const popupContent = `
             <div id="stripe-popup" class="stripe-popup-container">
@@ -40,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
             layout: "tabs",
         };
 
-
         const paymentElement = elements.create("payment", paymentElementOptions);
         paymentElement.mount("#payment-element");
 
@@ -60,17 +58,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-try {
-            const { paymentIntent } = await stripe.retrievePaymentIntent(clientSecret);
-            console.log("Retrieved payment intent:", paymentIntent);
-} catch (error) {
-    console.error("Error retrieving payment intent:", error);
-}
+            try {
+                const { paymentIntent } = await stripe.retrievePaymentIntent(clientSecret);
+            } catch (error) {}
+
             switch (paymentIntent.status) {
                 case "succeeded":
                     setLoading(false);
                     showMessage("Payment succeeded!");
-                    console.log("About to make AJAX request to WordPress");  // This line
 
                     // Trigger the AJAX call to WordPress
                     jQuery.ajax({
@@ -80,14 +75,10 @@ try {
                             action: "add_payment_comment",
                             amount: amount,
                             project_id: projectId,
-                            nonce: my_ajax_object.nonce  // This is where we're adding the nonce
+                            nonce: my_ajax_object.nonce 
                         },
-                        success: function(response) {
-                            console.log("Successfully added comment:", response);
-                        },
-                        error: function(error) {
-                            console.error("Error adding comment:", error);
-                        }
+                        success: function(response) {},
+                        error: function(error) {}
                     });
                     break;
                 case "processing":
@@ -130,3 +121,4 @@ try {
         }
     }
 });
+

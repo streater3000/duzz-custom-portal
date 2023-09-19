@@ -22,6 +22,9 @@ public static function create_duzz_forms_connectors() {
 
         Duzz_Keys::init();
         self::$field_data = Duzz_Keys::get_keys();
+
+        self::$field_data = apply_filters('modify_duzz_field_data', self::$field_data);
+
         self::$field_filtered_data = Duzz_Keys::get_filtered_keys();
 
         $removedKeys = Duzz_Keys::get_keys_removed([
@@ -34,6 +37,7 @@ public static function create_duzz_forms_connectors() {
             'project_status',
             'customer_address'
         ]);
+
 
 
     $duzz_forms_admin_connector = new \Duzz\Base\Admin\Factory\Duzz_Forms_Connector('admin');
@@ -54,6 +58,8 @@ public static function create_duzz_forms_connectors() {
     $duzz_forms_settings_fields_connector->add_section(self::settings_list_data('email_settings'), 'email_settings', 'text');
     $duzz_forms_settings_fields_connector->add_section(self::settings_list_data('welcome_message'), 'welcome_message', 'textarea');
     
+    $duzz_forms_settings_fields_connector->add_section(self::settings_list_data('toggle_redirect'), 'toggle_redirect', 'toggle');
+
     $duzz_forms_settings_fields_connector->add_section(self::settings_list_data('acf_group'), 'acf_group', 'text');
     $duzz_forms_settings_fields_connector->add_section(self::settings_list_data('remove_keys'), 'remove_keys', 'text');
     $duzz_forms_settings_fields_connector->add_section(self::settings_list_data('project_page'), 'project_page', 'select2', self::$field_filtered_data);
@@ -151,6 +157,13 @@ public static function settings_list_data($listType) {
             return array(
                 'API_secret_key_live' => '',
                 'API_publishable_key_live' => '',
+            );
+        break;
+
+
+        case 'toggle_redirect':
+            return array(
+                'redirect_to_workspace_on_login' => '',
             );
         break;
 

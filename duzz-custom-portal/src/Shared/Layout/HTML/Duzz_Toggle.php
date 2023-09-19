@@ -20,7 +20,7 @@ class Duzz_Toggle {
     public function render() {
         echo '<label class="toggle-switch">'; 
         echo '<' . esc_html($this->tag) . $this->getAttributesString() . '>';
-        echo '<span class="slider"></span> ' . esc_html__('Testing: ') . ($this->toggle_value ? esc_html__('On') : esc_html__('Off'));
+        echo '<span class="slider"></span> ' . ($this->toggle_value ? esc_html__('On') : esc_html__('Off'));
         echo '</label>';
     }
 

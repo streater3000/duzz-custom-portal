@@ -5,14 +5,14 @@ namespace Duzz\Core;
 class Duzz_Edit_Wordpress {
 
     public function __construct() {
-            add_action('wp', [$this, 'duzz_projects_buffer'], 0);
+        add_action('wp', [$this, 'duzz_projects_buffer'], 0);
         add_action('pre_get_comments', [$this, 'filter_comments']);
     }
 
    public function duzz_projects_buffer() {
         if ( is_page( 9924 ) ) {
             ob_start(); // Start output buffering
-            add_action('wp_head', [$this, 'duzz_projects_head'], 0); // Hook to wp_head with priority 0 to ensure it runs early
+            add_action('wp_head', [$this, 'duzz_projects_head'], 0); 
         }
     }
 
@@ -50,6 +50,7 @@ class Duzz_Edit_Wordpress {
         }
     }
 
-
 }
+
+
 
