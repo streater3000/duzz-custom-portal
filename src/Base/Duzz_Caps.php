@@ -8,15 +8,15 @@ class Duzz_Caps {
 
     private function __construct() {
         $this->postTypesInstance = new Duzz_Post_Types();
-        $this->add_roles();
-        add_action('init', array($this, 'assign_caps'), 11);
+        $this->duzz_add_roles();
+        add_action('init', array($this, 'duzz_assign_caps'), 11);
     }
 
-    public static function init() {
+    public static function duzz_init() {
         new self();  
     }
 
-    public static function add_roles() {
+    public static function duzz_add_roles() {
         add_role(
             'duzz_bot',
             __( 'Duzz Bot' ),
@@ -41,8 +41,8 @@ class Duzz_Caps {
         );
     }
 
-    private function create_caps($role, $defaultVisibility, $customCaps = []) {
-        $postTypeNames = $this->postTypesInstance->getAllPostTypeNames();
+    private function duzz_create_caps($role, $defaultVisibility, $customCaps = []) {
+        $postTypeNames = $this->postTypesInstance->duzz_getAllPostTypeNames();
         $capabilityPrefixes = ['add_', 'view_', 'edit_', 'archive_'];
 
         $customVisibility = !$defaultVisibility;  // Automatically set the opposite value for custom capabilities
@@ -56,9 +56,9 @@ class Duzz_Caps {
         }
     }
 
-    public function assign_caps() {
+    public function duzz_assign_caps() {
         $admin = get_role('duzz_admin');
-        $this->create_caps($admin, true, [
+        $this->duzz_create_caps($admin, true, [
             'add_company',
             'archive_company'
         ]);

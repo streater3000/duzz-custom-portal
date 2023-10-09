@@ -18,19 +18,19 @@ public function __construct() {
 
     $this->data_passer = new Duzz_Data_Passer();
     
-    add_action('admin_post_send_invoice', array($this, 'send_invoice'));
-    add_action('wpforms_process_complete', array($this, 'staff_add_project'), 10, 4);
-    add_action('wpforms_process_complete', array($this, 'customer_add_project'), 10, 4);
-    add_action('init', array($this, 'resend_project_email'));
-    add_action('init', array($this, 'add_custom_post'), 10); // Default priority
-    add_action('init', array($this, 'update_duzz_fields'), 20); // Runs after add_custom_post
+    add_action('admin_post_send_invoice', array($this, 'duzz_send_invoice'));
+    add_action('wpforms_process_complete', array($this, 'duzz_staff_add_project'), 10, 4);
+    add_action('wpforms_process_complete', array($this, 'duzz_customer_add_project'), 10, 4);
+    add_action('init', array($this, 'duzz_resend_project_email'));
+    add_action('init', array($this, 'duzz_add_custom_post'), 10); // Default priority
+    add_action('init', array($this, 'duzz_update_duzz_fields'), 20); // Runs after add_custom_post
 
    $this->stripe_checkout = new Duzz_Stripe_Checkout();
 }
 
 
 
-private function check_empty_fields(array $fields) {
+private function duzz_check_empty_fields(array $fields) {
     foreach ($fields as $field => $value) {
         if (empty($value)) {
             wp_safe_redirect(add_query_arg('error', 'true', wp_get_referer()));
@@ -39,87 +39,109 @@ private function check_empty_fields(array $fields) {
     }
 }
 
-private function check_user_capability($capability) {
+private function duzz_check_user_capability($capability) {
     if (!current_user_can($capability)) {
         die('You do not have permission to perform this action.');
     }
 }
 
-private function verify_nonce($nonce_action) {
-    if (!$this->data_passer->retrieve('POST', '_wpnonce', 'action') || !wp_verify_nonce($this->data_passer->retrieve('POST', '_wpnonce', 'action'), $nonce_action)) {
+private function duzz_verify_nonce($nonce_action) {
+    if (!$this->data_passer->duzz_retrieve('POST', '_wpnonce', 'action') || !wp_verify_nonce($this->data_passer->duzz_retrieve('POST', '_wpnonce', 'action'), $nonce_action)) {
         wp_die('Nonce verification failed!', 403);
     }
 }
 
-public function update_duzz_fields() {
-
-    // If you want just the post_id
-    $post_id = $this->data_passer->retrieve('POST', 'post_id');
+public function duzz_update_duzz_fields() {
     
-    // If you want the entire request array
-    $requestData = $this->data_passer->retrieve('POST');
+    // Retrieve the post_id
+    $post_id = $this->data_passer->duzz_retrieve('POST', 'post_id');
+    
+    // Retrieve the selected fields
+    $selected_fields = explode(',', $this->data_passer->duzz_retrieve('POST', 'selected_fields', 'nonced'));
 
-    if(!is_array($requestData)) {
+    // Address fields array
+    $address_fields = array(
+        'customer_address1',
+        'customer_address2',
+        'customer_city',
+        'customer_state',
+        'customer_zip',
+    );
+
+    // This will help handle if no fields are selected
+    if(!$selected_fields || !is_array($selected_fields)) {
         return;
     }
+
+    // Check if 'customer_address' is a selected field
+    if (in_array('customer_address', $selected_fields)) {
+        // Merge the address fields into the selected fields
+        $selected_fields = array_merge($selected_fields, $address_fields);
+        // Remove the 'customer_address' field as it's now redundant
+        $selected_fields = array_diff($selected_fields, array('customer_address'));
+    }
     
+    // Check if acf_form_head function exists
     if (!function_exists('acf_form_head')) {
         
-        foreach ($requestData as $key => $value) {
-            if ($key == 'post_id') {
-                continue;
-            }
+        // Loop through the selected fields to retrieve and process their values
+        foreach ($selected_fields as $field_name) {
+            $field_value = $this->data_passer->duzz_retrieve('POST', $field_name, 'nonced');
             
-            Duzz_Helpers::duzz_update_field(
-                sanitize_key($key),
-                sanitize_text_field($value),
-                $post_id
-            );
+            // Avoid processing post_id as we already fetched it
+            if ($field_name != 'post_id') {
+                Duzz_Helpers::duzz_update_field(
+                    sanitize_key($field_name),
+                    sanitize_text_field($field_value),
+                    $post_id
+                );
+            }
         }
         
+        // Trigger your custom action hook
         do_action('duzz_fields_updated', $post_id);
     } 
 }
 
 
 
-function add_custom_post() {
+function duzz_add_custom_post() {
 
     
 
-    if ($this->data_passer->retrieve('POST', 'action', 'action')  === 'custom_post_add') {
+    if ($this->data_passer->duzz_retrieve('POST', 'action', 'action')  === 'custom_post_add') {
 
 
-        $this->verify_nonce('custom_post_add_nonce');
+        $this->duzz_verify_nonce('custom_post_add_nonce');
 
         if (!current_user_can('publish_posts')) {
             die('You do not have permission to perform this action.');
         }
 
-        $company_id = $this->data_passer->retrieve('POST', 'company_id', 'action') ?? '';
+        $company_id = $this->data_passer->duzz_retrieve('POST', 'company_id', 'action') ?? '';
         
-        $team_id = $this->data_passer->retrieve('POST', 'team_id', 'action') ?? '';
+        $team_id = $this->data_passer->duzz_retrieve('POST', 'team_id', 'action') ?? '';
         
-        $staff_id = $this->data_passer->retrieve('POST', 'staff_id', 'action') ?? '';
+        $staff_id = $this->data_passer->duzz_retrieve('POST', 'staff_id', 'action') ?? '';
  
-        $post_type = $this->data_passer->retrieve('POST', 'post_type', 'action') ?? '';
+        $post_type = $this->data_passer->duzz_retrieve('POST', 'post_type', 'action') ?? '';
 
         // Fetch the metadata field names
-        $selected_columns = Duzz_Get_Data::get_form_id('settings_list_projects_field_data', 'selected_columns');
+        $selected_columns = Duzz_Get_Data::duzz_get_form_id('duzz_settings_list_projects_field_data', 'selected_columns');
 
-        $selected_columns_data_title = Duzz_Get_Data::get_form_id('settings_list_projects_field_data', 'selected_columns_data_title');
+        $selected_columns_data_title = Duzz_Get_Data::duzz_get_form_id('duzz_settings_list_projects_field_data', 'selected_columns_data_title');
 
         $selected_columns_data_title = $selected_columns_data_title[0];
 
         // Get the value for the title from Duzz_Data_Passer using the specified meta key for title
-        $title = $this->data_passer->retrieve('POST', $selected_columns_data_title, 'action') ?? '';
+        $title = $this->data_passer->duzz_retrieve('POST', $selected_columns_data_title, 'action') ?? '';
 
         // Check if essential fields are not empty
         if (empty($title) || empty($post_type)) {
             return false; // or handle error
         }
 
-        $tracking_id = Duzz_Project_Number::generate();
+        $tracking_id = Duzz_Project_Number::duzz_generate();
 
         // Combine them into a single list
         $meta_keys = is_array($selected_columns) ? $selected_columns : [];
@@ -143,7 +165,7 @@ function add_custom_post() {
 
         // Loop through the metadata_keys to fetch data and save them
         foreach ($meta_keys as $meta_key) {
-            $meta_value = $this->data_passer->retrieve('POST', $meta_key, 'action') ?? '';
+            $meta_value = $this->data_passer->duzz_retrieve('POST', $meta_key, 'action') ?? '';
             $args['meta_input'][$meta_key] = $meta_value;
         }
 
@@ -155,20 +177,20 @@ function add_custom_post() {
 }
 
 
-public function send_invoice() {
+public function duzz_send_invoice() {
 
     // Check if the form was submitted using Duzz_Data_Passer
-    if ($this->data_passer->retrieve('POST', 'action', 'action') !== 'send_invoice') return;
+    if ($this->data_passer->duzz_retrieve('POST', 'action', 'action') !== 'send_invoice') return;
 
-    $this->verify_nonce('send_invoice_nonce');
-    $this->check_user_capability('publish_posts');
+    $this->duzz_verify_nonce('send_invoice_nonce');
+    $this->duzz_check_user_capability('publish_posts');
 
-    $payment_id = $this->data_passer->retrieve('POST', 'payment_id', 'action') ?? '';
-    $invoice_name = $this->data_passer->retrieve('POST', 'invoice_name', 'action') ?? '';
-    $sales_tax = $this->data_passer->retrieve('POST', 'sales_tax', 'action') ?? '';
-    $invoice_type = $this->data_passer->retrieve('POST', 'invoice_type', 'action') ?? '';
+    $payment_id = $this->data_passer->duzz_retrieve('POST', 'payment_id', 'action') ?? '';
+    $invoice_name = $this->data_passer->duzz_retrieve('POST', 'invoice_name', 'action') ?? '';
+    $sales_tax = $this->data_passer->duzz_retrieve('POST', 'sales_tax', 'action') ?? '';
+    $invoice_type = $this->data_passer->duzz_retrieve('POST', 'invoice_type', 'action') ?? '';
 
-    $this->check_empty_fields([
+    $this->duzz_check_empty_fields([
         'invoice_name' => $invoice_name,
         'sales_tax' => $sales_tax,
     ]);
@@ -176,16 +198,16 @@ public function send_invoice() {
     $existing_post = get_post($payment_id);
     $prev_invoice_type = get_post_meta($payment_id, 'invoice_type', true);
 
-    $line_items = $this->get_line_items($this->data_passer);
-    $invoice_table = $this->generate_invoice_table($invoice_name, $invoice_type, $line_items, $sales_tax);
-    $post_id = $this->handle_post_data($invoice_name, $payment_id, $invoice_type, $existing_post, $prev_invoice_type, $line_items, $sales_tax, $invoice_table);
+    $line_items = $this->duzz_get_line_items($this->data_passer);
+    $invoice_table = $this->duzz_generate_invoice_table($invoice_name, $invoice_type, $line_items, $sales_tax);
+    $post_id = $this->duzz_handle_post_data($invoice_name, $payment_id, $invoice_type, $existing_post, $prev_invoice_type, $line_items, $sales_tax, $invoice_table);
     
-    $this->finalize($post_id, $this->data_passer->retrieve('POST', 'project_id', 'action'));
+    $this->duzz_finalize($post_id, $this->data_passer->duzz_retrieve('POST', 'project_id', 'action'));
 }
 
 
 
-private function finalize($post_id, $project_id) {
+private function duzz_finalize($post_id, $project_id) {
     // Function to finalize the process
     if (!is_wp_error($post_id)) {
         wp_safe_redirect(site_url('/project/' . esc_attr($project_id) . '/'));
@@ -194,16 +216,16 @@ private function finalize($post_id, $project_id) {
 }
 
 
-private function get_line_items($data_passer) {
+private function duzz_get_line_items($data_passer) {
     $line_items = [];
     $total_sum = 0;
-    $items = $this->data_passer->retrieve('POST', 'item', 'action');
+    $items = $this->data_passer->duzz_retrieve('POST', 'item', 'action');
     
     if($items && is_array($items)) {
         foreach($items as $id => $item) {
-            $units = intval($this->data_passer->retrieve('POST', 'units', 'action')[$id]);
-            $unit_type = sanitize_text_field($this->data_passer->retrieve('POST', 'unit_type', 'action')[$id]);
-            $price = floatval($this->data_passer->retrieve('POST', 'price', 'action')[$id]);
+            $units = intval($this->data_passer->duzz_retrieve('POST', 'units', 'action')[$id]);
+            $unit_type = sanitize_text_field($this->data_passer->duzz_retrieve('POST', 'unit_type', 'action')[$id]);
+            $price = floatval($this->data_passer->duzz_retrieve('POST', 'price', 'action')[$id]);
             $total = $units * $price;
             
             $total_sum += $total; 
@@ -222,9 +244,9 @@ private function get_line_items($data_passer) {
 }
 
 
-private function generate_invoice_table($invoice_name, $invoice_type, $line_items, $sales_tax) {
+private function duzz_generate_invoice_table($invoice_name, $invoice_type, $line_items, $sales_tax) {
 
-    $project_id = $this->data_passer->retrieve('POST', 'project_id', 'action') ?? '';
+    $project_id = $this->data_passer->duzz_retrieve('POST', 'project_id', 'action') ?? '';
 
     // Initialize the invoice_table string
     $invoice_table = '<div class="header-pricing-container">';
@@ -286,12 +308,12 @@ private function generate_invoice_table($invoice_name, $invoice_type, $line_item
 }
 
 
-private function handle_post_data($invoice_name, $payment_id, $invoice_type, $existing_post, $prev_invoice_type, $line_items, $sales_tax, $invoice_table) {
+private function duzz_handle_post_data($invoice_name, $payment_id, $invoice_type, $existing_post, $prev_invoice_type, $line_items, $sales_tax, $invoice_table) {
     $total_sum = array_sum(array_column($line_items['line_items'], 'total'));
     $tax_total = $total_sum * ($sales_tax / 100);
     $total_aftertax_sum = $total_sum + $tax_total;
     
-    $project_id = $this->data_passer->retrieve('POST', 'project_id', 'action') ?? '';
+    $project_id = $this->data_passer->duzz_retrieve('POST', 'project_id', 'action') ?? '';
     $post_data = [
         'post_title'  => sanitize_text_field($invoice_name),
         'post_status' => 'publish',
@@ -319,29 +341,29 @@ private function handle_post_data($invoice_name, $payment_id, $invoice_type, $ex
         case $invoice_type === 'Invoice' && $existing_post && $prev_invoice_type !== 'Invoice':
             $post_data['ID'] = $existing_post->ID;
             $post_id = wp_update_post($post_data);
-            Duzz_Status_Feed::add_comment_to_status_feed('Your invoice is ready. Click the button below to pay:<br>' . $invoice_table, $project_id, $payment_id);
+            Duzz_Status_Feed::duzz_add_comment_to_status_feed('Your invoice is ready. Click the button below to pay:<br>' . $invoice_table, $project_id, $payment_id);
             break;
         
         case $invoice_type === 'Invoice' && !$existing_post && $prev_invoice_type !== 'Invoice':
             $post_id = wp_insert_post($post_data);
-            Duzz_Status_Feed::add_comment_to_status_feed('Your invoice is ready. Click the button below to pay:<br>' . $invoice_table, $project_id, $payment_id);
+            Duzz_Status_Feed::duzz_add_comment_to_status_feed('Your invoice is ready. Click the button below to pay:<br>' . $invoice_table, $project_id, $payment_id);
             break;
         
         case $invoice_type === 'Invoice':
             $post_data['ID'] = $existing_post->ID;
             $post_id = wp_update_post($post_data);
-            Duzz_Status_Feed::add_comment_to_status_feed('Your ' . $invoice_type . ' has been updated:<br>' . $invoice_table, $project_id, $payment_id);
+            Duzz_Status_Feed::duzz_add_comment_to_status_feed('Your ' . $invoice_type . ' has been updated:<br>' . $invoice_table, $project_id, $payment_id);
             break;
         
         case $invoice_type === 'Estimate' && $existing_post:
             $post_data['ID'] = $existing_post->ID;
             $post_id = wp_update_post($post_data);
-            Duzz_Status_Feed::add_comment_to_status_feed('Your ' . $invoice_type . ' has been updated:<br>' . $invoice_table, $project_id);
+            Duzz_Status_Feed::duzz_add_comment_to_status_feed('Your ' . $invoice_type . ' has been updated:<br>' . $invoice_table, $project_id);
             break;
         
         default:
             $post_id = wp_insert_post($post_data);
-            Duzz_Status_Feed::add_comment_to_status_feed($invoice_table, $project_id);
+            Duzz_Status_Feed::duzz_add_comment_to_status_feed($invoice_table, $project_id);
             break;
     }
 
@@ -350,23 +372,23 @@ private function handle_post_data($invoice_name, $payment_id, $invoice_type, $ex
 
 
 /***CUSTOMER CREATE PROJECT***/
-public function customer_add_project( $fields, $entry, $form_data, $entry_id ) {
+public function duzz_customer_add_project( $fields, $entry, $form_data, $entry_id ) {
         // Below, we restrict output to form #9937.
 
 
-    $form_number = Duzz_Get_Data::get_form_id('client_form_id_field_data', 'form_id');
+    $form_number = Duzz_Get_Data::duzz_get_form_id('duzz_client_form_id_field_data', 'form_id');
 
     if (absint($form_data['id']) !== intval($form_number)) {
         return;
     }
 
 
-    $option_name = 'client_field_numbers_field_data';
-    $saved_values = Duzz_Get_Data::get_field_names('client_field_numbers');
+    $option_name = 'duzz_client_field_numbers_field_data';
+    $saved_values = Duzz_Get_Data::duzz_get_field_names('client_field_numbers');
     $field_numbers = [];
 
     foreach ($saved_values as $saved_value) {
-        $field_numbers[$saved_value] = Duzz_Get_Data::get_form_id($option_name, $saved_value);
+        $field_numbers[$saved_value] = Duzz_Get_Data::duzz_get_form_id($option_name, $saved_value);
     }
 
 
@@ -382,7 +404,7 @@ public function customer_add_project( $fields, $entry, $form_data, $entry_id ) {
 
 
 
-$tracking_id = Duzz_Project_Number::generate();
+$tracking_id = Duzz_Project_Number::duzz_generate();
 $project_id = $tracking_id;
                 
 
@@ -424,10 +446,10 @@ $project_id = $tracking_id;
 
         $project_id = wp_insert_post( $post_data );
 
-        Duzz_Status_Feed::add_to_status_feed( 'Customer Created Account', $project_id );
+        Duzz_Status_Feed::duzz_add_to_status_feed( 'Customer Created Account', $project_id );
 
 
-         $admin_email_settings = Duzz_Get_Data::get_form_id('settings_email_settings_field_data', 'admin_email');
+         $admin_email_settings = Duzz_Get_Data::duzz_get_form_id('duzz_settings_email_settings_field_data', 'admin_email');
 
             $data = [
                 'email_address'   => $admin_email_settings,
@@ -438,21 +460,21 @@ $project_id = $tracking_id;
             ];
 
             $email = new Duzz_Email( 'new-customer', $data );
-            $email->send();
+            $email->duzz_send();
 
 
-        $welcome_message = Duzz_Get_Data::get_form_id('settings_welcome_message_field_data', 'message');
-        Duzz_Status_Feed::add_comment_to_status_feed('Hi ' . ucwords(strtolower($customer_name['first'])) . ', ' . $welcome_message, $project_id);
+        $welcome_message = Duzz_Get_Data::duzz_get_form_id('duzz_settings_welcome_message_field_data', 'message');
+        Duzz_Status_Feed::duzz_add_comment_to_status_feed('Hi ' . ucwords(strtolower($customer_name['first'])) . ', ' . $welcome_message, $project_id);
 
-            wp_redirect(site_url('/your-project/' . $project_id . '/'));
+        wp_redirect(site_url('/your-project/' . $project_id . '/'));
             die();
     }
 
     /***staff ADD PROJECT***/
 
-public function staff_add_project($fields, $entry, $form_data, $entry_id)
+public function duzz_staff_add_project($fields, $entry, $form_data, $entry_id)
 {
-    $form_number = Duzz_Get_Data::get_form_id('admin_form_id_field_data', 'form_id');
+    $form_number = Duzz_Get_Data::duzz_get_form_id('duzz_admin_form_id_field_data', 'form_id');
 
     if (absint($form_data['id']) !== intval($form_number)) {
         return;
@@ -462,12 +484,12 @@ public function staff_add_project($fields, $entry, $form_data, $entry_id)
             die('You do not have permission to perform this action.');
         }
 
-    $option_name = 'admin_field_numbers_field_data';
-    $saved_values = Duzz_Get_Data::get_field_names('admin_field_numbers');
+    $option_name = 'duzz_admin_field_numbers_field_data';
+    $saved_values = Duzz_Get_Data::duzz_get_field_names('admin_field_numbers');
     $field_numbers = [];
 
     foreach ($saved_values as $saved_value) {
-        $field_numbers[$saved_value] = Duzz_Get_Data::get_form_id($option_name, $saved_value);
+        $field_numbers[$saved_value] = Duzz_Get_Data::duzz_get_form_id($option_name, $saved_value);
     }
 
     $customer_address = $fields[ intval($field_numbers['customer_address']) ];
@@ -487,7 +509,7 @@ public function staff_add_project($fields, $entry, $form_data, $entry_id)
                 $combined_address = $customer_address1 .', '. $customer_city . ', ' . $customer_state .' '. $customer_zip;
    
 
-    $tracking_id = Duzz_Project_Number::generate();
+    $tracking_id = Duzz_Project_Number::duzz_generate();
     $project_id = $tracking_id;
 
     // create project
@@ -525,17 +547,16 @@ public function staff_add_project($fields, $entry, $form_data, $entry_id)
     die();
 }
 
-public function resend_project_email() {
-    error_log("resend_project_email method triggered");
+public function duzz_resend_project_email() {
 
-    if ($this->data_passer->retrieve('POST', 'action', 'action') === 'resend_project_email') {
+    if ($this->data_passer->duzz_retrieve('POST', 'action', 'action') === 'resend_project_email') {
         
-        $this->verify_nonce('resend_project_email');
+        $this->duzz_verify_nonce('resend_project_email');
 
-        $project_id = sanitize_text_field($this->data_passer->retrieve('POST', 'project_id', 'action'));
-        $search_email = sanitize_text_field($this->data_passer->retrieve('POST', 'project_email_search', 'action'));
-        $search_last_name = sanitize_text_field($this->data_passer->retrieve('POST', 'project_last_name_search', 'action'));
-        $ip = sanitize_text_field($this->data_passer->retrieve('POST', 'ip', 'action'));
+        $project_id = sanitize_text_field($this->data_passer->duzz_retrieve('POST', 'project_id', 'action'));
+        $search_email = sanitize_text_field($this->data_passer->duzz_retrieve('POST', 'project_email_search', 'action'));
+        $search_last_name = sanitize_text_field($this->data_passer->duzz_retrieve('POST', 'project_last_name_search', 'action'));
+        $ip = sanitize_text_field($this->data_passer->duzz_retrieve('POST', 'ip', 'action'));
         
         if (!empty($project_id)) {
             $customer_email = Duzz_Helpers::duzz_get_field('customer_email', $project_id);
@@ -603,8 +624,8 @@ public function resend_project_email() {
 
             $email = new Duzz_Email('invite', $data);
 
-            if ($email->send() === true) {
-                Duzz_Status_Feed::add_to_status_feed('Customer requested project email resend', $project_id);
+            if ($email->duzz_send() === true) {
+                Duzz_Status_Feed::duzz_add_to_status_feed('Customer requested project email resend', $project_id);
 
                 $redirect_url = site_url("/resend-project/?resendprojectemail=true");
                 $nonce_url = htmlspecialchars_decode(wp_nonce_url($redirect_url, 'resendprojectemail_pass_get_nonce', 'resendprojectemail-pass-get-nonce'));
@@ -612,7 +633,7 @@ public function resend_project_email() {
                 wp_redirect($nonce_url);
                 exit;
             } else {
-                Duzz_Status_Feed::add_to_status_feed('Failed Project Access: New device detected', $project_id);
+                Duzz_Status_Feed::duzz_add_to_status_feed('Failed Project Access: New device detected', $project_id);
 
                 $redirect_url = site_url("/resend-project/?failedprojectemail=true");
                 $nonce_url = htmlspecialchars_decode(wp_nonce_url($redirect_url, 'failedprojectemail_pass_get_nonce', 'failedprojectemail-pass-get-nonce'));

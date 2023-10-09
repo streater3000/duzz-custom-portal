@@ -11,14 +11,14 @@ class Duzz_Base {
 	 * Autoload method
 	 */
 	public function __construct() {
-		add_action( 'init', array( $this, 'register_project_post_type' ), 20 );
-		add_action( 'init', array( $this, 'register_company_post_type' ), 20 );
-		add_action( 'init', array( $this, 'register_team_post_type' ), 20 );
-		add_action( 'init', array( $this, 'register_payment_post_type' ), 20 ); 
+		add_action( 'init', array( $this, 'duzz_register_project_post_type' ), 20 );
+		add_action( 'init', array( $this, 'duzz_register_company_post_type' ), 20 );
+		add_action( 'init', array( $this, 'duzz_register_team_post_type' ), 20 );
+		add_action( 'init', array( $this, 'duzz_register_payment_post_type' ), 20 ); 
 	}
 
 
-    public function register_payment_post_type() {
+    public function duzz_register_payment_post_type() {
         $args = array(
             'labels' => array(
                 'name' => __( 'Payments' ),
@@ -40,7 +40,7 @@ class Duzz_Base {
 	/**
 	 * Project post type.
 	 */
-	public function register_project_post_type() {
+	public function duzz_register_project_post_type() {
 		$args = array(
 			'labels' => array(
 				'name' => __( 'Projects List' ),
@@ -62,7 +62,7 @@ class Duzz_Base {
 	/**
 	 * Company post type.
 	 */
-	public function register_company_post_type() {
+	public function duzz_register_company_post_type() {
 		$args = array(
 			'labels' => array(
 				'name' => __( 'Companies' ),
@@ -84,7 +84,7 @@ class Duzz_Base {
 	/**
 	 * Team post type.
 	 */
-	public function register_team_post_type() {
+	public function duzz_register_team_post_type() {
 		$args = array(
 			'labels' => array(
 				'name' => __( 'Teams' ),

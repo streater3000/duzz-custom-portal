@@ -19,11 +19,11 @@ class Duzz_Admin_Table_Form_Factory
         $this->section_name = $section_name;
     }
 
-    public function addHeaderColumn($column) {
+    public function duzz_addHeaderColumn($column) {
         $this->headerColumns[] = $column;
     }
 
-    public function addRow($columns) {
+    public function duzz_addRow($columns) {
         // Check if the header columns have already been added
         $addHeaderColumns = empty($this->headerColumns);
 
@@ -31,26 +31,26 @@ class Duzz_Admin_Table_Form_Factory
 
         // Check the number of columns in the row and add header columns if necessary
         if (count($columns) === 3 && $addHeaderColumns) {
-            $this->addHeaderColumn('Field Label');
-            $this->addHeaderColumn('Field Name');
-            $this->addHeaderColumn('Field Value');
+            $this->duzz_addHeaderColumn('Field Label');
+            $this->duzz_addHeaderColumn('Field Name');
+            $this->duzz_addHeaderColumn('Field Value');
         }
     }
 
-    public function render() {
-        $this->renderTable();
+    public function duzz_render() {
+        $this->duzz_renderTable();
     }
 
-protected function renderTable() {
+protected function duzz_renderTable() {
     // Step 1: Create the outer container with the appropriate class.
     $divClass = $this->fieldType === 'table' ? 'table-container' : 'postbox';
     $divcontainer = new HTMLNamespace\Duzz_HTML('div', ['class' => $divClass]);
 
     // Continue with your existing logic to render header, body, etc. for the table
-    $this->renderHeaderRow();
-    $this->renderBody();
+    $this->duzz_renderHeaderRow();
+    $this->duzz_renderBody();
     if ($this->fieldType !== 'table') {
-        $this->renderTitle();
+        $this->duzz_renderTitle();
     }
 
     // Create another inner div container
@@ -59,46 +59,46 @@ protected function renderTable() {
     $div = new HTMLNamespace\Duzz_HTML('div', ['class' => $divClasstwo . ' ' . $section_name_class]);
     
     // Step 2: Add the table to the inner div container.
-    $div->addChild($this->tableFactory);
+    $div->duzz_addChild($this->tableFactory);
     
     // Add the inner div to the main container.
-    $divcontainer->addChild($div);
+    $divcontainer->duzz_addChild($div);
 
     // Step 3: Render the entire container.
-    $divcontainer->render();
+    $divcontainer->duzz_render();
 }
 
 
 
-protected function renderTitle() {
+protected function duzz_renderTitle() {
     $section_name = ucwords(str_replace('_', ' ', $this->section_name));
     $title_attributes = ['class' => 'section-title'];
     $section_title = new HTMLNamespace\Duzz_HTML('h2', $title_attributes);
-    $section_title->addChild($section_name);  // Use addChild instead of setContent
+    $section_title->duzz_addChild($section_name);  // Use addChild instead of setContent
 
     $div = new HTMLNamespace\Duzz_HTML('div', ['class' => 'title-container']);
-    $div->addChild($section_title);
+    $div->duzz_addChild($section_title);
     
-    $this->tableFactory->addChild($div);
+    $this->tableFactory->duzz_addChild($div);
 }
 
-    protected function renderHeaderRow() {
+    protected function duzz_renderHeaderRow() {
         if (!empty($this->headerColumns)) {
             $thead = new HTMLNamespace\Duzz_Table('thead');
             $tr = new HTMLNamespace\Duzz_Table('tr');
 
             foreach ($this->headerColumns as $column) {
                 $th = new HTMLNamespace\Duzz_Table('th');
-                $th->addChild($column);
-                $tr->addChild($th);
+                $th->duzz_addChild($column);
+                $tr->duzz_addChild($th);
             }
 
-            $thead->addChild($tr);
-            $this->tableFactory->addChild($thead);
+            $thead->duzz_addChild($tr);
+            $this->tableFactory->duzz_addChild($thead);
         }
     }
 
-protected function renderBody() {
+protected function duzz_renderBody() {
     $tbody = new HTMLNamespace\Duzz_Table('tbody');
 
     foreach ($this->rows as $columns) {
@@ -107,19 +107,19 @@ protected function renderBody() {
         foreach ($columns as $column) {
             $td = new HTMLNamespace\Duzz_Table('td');
 
-    if (is_object($column) && method_exists($column, 'render')) {
-        $columnContent = $column->render();
-        $td->setContent($columnContent);
+    if (is_object($column) && method_exists($column, 'duzz_render')) {
+        $columnContent = $column->duzz_render();
+        $td->duzz_setContent($columnContent);
         } else {
-                $td->addChild($column);
-                $tr->addChild($td);
+                $td->duzz_addChild($column);
+                $tr->duzz_addChild($td);
             }
         }
 
-        $tbody->addChild($tr);
+        $tbody->duzz_addChild($tr);
     }
 
-    $this->tableFactory->addChild($tbody);
+    $this->tableFactory->duzz_addChild($tbody);
 }
 
 }

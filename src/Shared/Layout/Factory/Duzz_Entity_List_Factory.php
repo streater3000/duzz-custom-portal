@@ -10,7 +10,6 @@ use Duzz\Shared\Actions as ActionsNamespace;
 use Duzz\Core as CoreHelpers;
 use \WP_Query;
 
-
 class Duzz_Entity_List_Factory {
 
     private $list_args;
@@ -34,41 +33,41 @@ class Duzz_Entity_List_Factory {
         $this->field_name = $this->list_args['field_name'];
         $this->include_fields = $this->list_args['include_fields'];
         $this->container = new Duzz_Return_HTML('div', array('class' => 'post-table-list-container'));
-        $this->call_list();
+        $this->duzz_call_list();
 
     }
 
-    public function render() {
+    public function duzz_render() {
         return $this->container;
     }
 
 
-    function call_list() {
+    function duzz_call_list() {
         $this->format_table = new Duzz_Return_HTML('div', ['class' => 'format-list-table', 'id' => 'format_list_table']);
         $this->call_list = new Duzz_Return_HTML('div', ['class' => 'call-list-table', 'id' => 'call_list_table']);
         
-        $args = $this->get_args();
-        $this->post_list = $this->list_posts_table($args);
+        $args = $this->duzz_get_args();
+        $this->post_list = $this->duzz_list_posts_table($args);
 
-        $this->call_list->addChild($this->post_list);
-        $this->format_table->addChild($this->call_list);
+        $this->call_list->duzz_addChild($this->post_list);
+        $this->format_table->duzz_addChild($this->call_list);
 
-        $this->pagination = $this->add_pagination($args);
-        $this->format_table->addChild($this->pagination);
+        $this->pagination = $this->duzz_add_pagination($args);
+        $this->format_table->duzz_addChild($this->pagination);
 
-        $this->container->addChild($this->format_table);
+        $this->container->duzz_addChild($this->format_table);
     }
 
-    function add_pagination( $args = array() ){
+    function duzz_add_pagination( $args = array() ){
         $this->add_pagination = new Duzz_Return_HTML('div', ['class' => 'add-pagination', 'id' => 'add_pagination']);
         $this->pagination_factory = new FactoryNamespace\Duzz_Pagination_Factory();
-        $this->pagination = $this->pagination_factory->create_pagination($args, $this->items_per_page, $this->current);
-        $this->add_pagination->addChild($this->pagination);
-        $this->format_table->addChild($this->add_pagination);
+        $this->pagination = $this->pagination_factory->duzz_create_pagination($args, $this->items_per_page, $this->current);
+        $this->add_pagination->duzz_addChild($this->pagination);
+        $this->format_table->duzz_addChild($this->add_pagination);
     }
 
 
-function list_posts_table( $args = array() ) {
+function duzz_list_posts_table( $args = array() ) {
 
 
 $field_data = get_option($this->options_name, array());
@@ -93,6 +92,7 @@ $all_columns = array_merge($selected_columns, $lockedColumns);
 
 
     $user = wp_get_current_user();
+
     $post_url = site_url( '/'.$this->post_type.'/' );
 
     $posts = get_posts( $args );
@@ -110,7 +110,7 @@ $all_columns = array_merge($selected_columns, $lockedColumns);
         $post_data['id'] = $post_id; // add the post ID to the data array
 
 
-        list($new_post, $new_post_title) = $postUpdateInstance->updateProject($post_id);
+        list($new_post, $new_post_title) = $postUpdateInstance->duzz_updateProject($post_id);
 
         foreach ( $all_columns as $column_name => $field_key ) {
             if ($column_name === 'status_update') {
@@ -138,7 +138,7 @@ $all_columns = array_merge($selected_columns, $lockedColumns);
             $field_key = $column_name;
         }
 
-        $table->addColumn($field_key, array('key' => $column_name, 'locked' => $isLocked));
+        $table->duzz_addColumn($field_key, array('key' => $column_name, 'locked' => $isLocked));
     }
 
     if (empty($data)) {
@@ -150,15 +150,15 @@ $all_columns = array_merge($selected_columns, $lockedColumns);
     }
 
     // Render the table with data, row classes, and project URL
-    $table_html = $table->render($data, $rowClasses, $post_url);
+    $table_html = $table->duzz_render($data, $rowClasses, $post_url);
 
        $table_div = new Duzz_Return_HTML('div', ['class' => 'entity-table-container', 'id' => 'entity-table-container']);
-        $table_div->addChild('div', ['class' => 'entity-table-html'], $table_html);
+        $table_div->duzz_addChild('div', ['class' => 'entity-table-html'], $table_html);
         return $table_div;
 }
 
 
-public function get_args() {
+public function duzz_get_args() {
 
 
 $this->current = max(1, get_query_var('paged'));

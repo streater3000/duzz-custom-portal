@@ -24,40 +24,40 @@ class Duzz_Admin_Settings_Sections {
         $this->available_selections = $available_selections;
     }
 
-    public function init() {
-        add_action( 'admin_init', array( $this, 'register_settings' ) );
+    public function duzz_init() {
+        add_action( 'admin_init', array( $this, 'duzz_register_settings' ) );
     }
 
 
-public function display_settings_saved_notice() {
+public function duzz_display_settings_saved_notice() {
     $settings_updated = filter_input(INPUT_GET, 'settings-updated', FILTER_VALIDATE_BOOLEAN);
     if ($settings_updated) {
         $div = new HTMLNamespace\Duzz_HTML('div', ['class' => 'notice notice-success is-dismissible']);
         $paragraph = new HTMLNamespace\Duzz_HTML('p');
-        $paragraph->addChild(__('Settings saved.', 'your-textdomain'));
+        $paragraph->duzz_addChild(__('Settings saved.', 'your-textdomain'));
 
-        $div->addChild($paragraph);
+        $div->duzz_addChild($paragraph);
 
-        return $div->render();
+        return $div->duzz_render();
     }
 }
 
-    public function register_settings() {
+    public function duzz_register_settings() {
         $default_field_data = $this->field_data;
 
         // Register the settings
         register_setting(
-            $this->forms_connector->get_option_group(), // Option group
-            $this->get_option_name(), // Option name
+            $this->forms_connector->duzz_get_option_group(), // Option group
+            $this->duzz_get_option_name(), // Option name
             [ $this, 'duzz_forms_sanitize_field_data_callback' ]
         );
 
         // Add the settings section
         add_settings_section(
-            $this->get_section_id(), // Section ID
+            $this->duzz_get_section_id(), // Section ID
             'Field Numbers', // Section title
             null, // Section callback
-            $this->forms_connector->get_page_slug()  // Page slug
+            $this->forms_connector->duzz_get_page_slug()  // Page slug
         );
 
 
@@ -67,17 +67,17 @@ public function display_settings_saved_notice() {
                 $field_name, // Field ID
                 ucwords(str_replace('_', ' ', $field_name)), // Field title
                 [ $this, 'duzz_forms_admin_connector_field_callback' ], // Field callback
-                $this->forms_connector->get_page_slug(),  // Page slug
-                $this->get_section_id(), // Section ID
+                $this->forms_connector->duzz_get_page_slug(),  // Page slug
+                $this->duzz_get_section_id(), // Section ID
                 array( 'label_for' => $field_name ) // Field arguments
             );
         }
     }
 
-public function render_form_table(string $page_slug) {
-    $this->display_settings_saved_notice(); 
+public function duzz_render_form_table(string $page_slug) {
+    $this->duzz_display_settings_saved_notice(); 
 
-    $saved_field_data = get_option($this->get_option_name());
+    $saved_field_data = get_option($this->duzz_get_option_name());
     $default_field_data = $this->field_data;
 
 
@@ -96,12 +96,12 @@ public function render_form_table(string $page_slug) {
 
 
         $field_type = $this->form_type;
-        $options_name = $this->get_option_name();
+        $options_name = $this->duzz_get_option_name();
         $nameAttribute = "{$options_name}[{$field_name}]";
 
         switch ($field_type) {
                     case 'select2':
-                        $field = esc_html(ActionsNamespace\Duzz_Format_Label::format($field_name));
+                        $field = esc_html(ActionsNamespace\Duzz_Format_Label::duzz_format($field_name));
                         $select = new HTMLNamespace\Duzz_Select2([
                             'name' => $nameAttribute . '[]',
                             'id' => $field_name,
@@ -112,12 +112,12 @@ public function render_form_table(string $page_slug) {
                         ], $this->available_selections, $field_value);
 
                         ob_start();
-                            $select->render();
+                            $select->duzz_render();
                             $select = ob_get_clean();
-                            $table->addRow([$field, $select]);
+                            $table->duzz_addRow([$field, $select]);
                             break;
                 case 'toggle':
-                    $field = esc_html(ActionsNamespace\Duzz_Format_Label::format($field_name));
+                    $field = esc_html(ActionsNamespace\Duzz_Format_Label::duzz_format($field_name));
                     $toggle_attributes = array(
                         'name' => $nameAttribute,
                         'value' => '1', 
@@ -126,12 +126,12 @@ public function render_form_table(string $page_slug) {
                     $is_toggle_checked = ($field_value == '1');
                     $toggle = new HTMLNamespace\Duzz_Toggle($toggle_attributes, $is_toggle_checked);
                     ob_start();
-                    $toggle->render();
+                    $toggle->duzz_render();
                     $toggle = ob_get_clean();
-                    $table->addRow([$field, $toggle]);
+                    $table->duzz_addRow([$field, $toggle]);
                     break;
                  case 'text':
-                    $field = esc_html(ActionsNamespace\Duzz_Format_Label::format($field_name));
+                    $field = esc_html(ActionsNamespace\Duzz_Format_Label::duzz_format($field_name));
                     $fieldObj = new HTMLNamespace\Duzz_Field('input', [
                         'name' => $nameAttribute,
                         'value' => $field_value,
@@ -139,25 +139,25 @@ public function render_form_table(string $page_slug) {
                         'type' => $field_type
                          ]);
                     ob_start();
-                    $fieldObj->render();
+                    $fieldObj->duzz_render();
                     $bufferedFieldObj = ob_get_clean();
-                    $table->addRow([$field, $bufferedFieldObj]);
+                    $table->duzz_addRow([$field, $bufferedFieldObj]);
                     break;
                 case 'textarea':
-                    $field = esc_html(ActionsNamespace\Duzz_Format_Label::format($field_name));
+                    $field = esc_html(ActionsNamespace\Duzz_Format_Label::duzz_format($field_name));
                     $fieldObj = new HTMLNamespace\Duzz_Field('textarea', [
                         'name' => $nameAttribute,
                         'id' => $field_name
                      ], $field_value);
                     ob_start();
-                    $fieldObj->render();
+                    $fieldObj->duzz_render();
                     $bufferedFieldObj = ob_get_clean();
-                    $table->addRow([$bufferedFieldObj]);
+                    $table->duzz_addRow([$bufferedFieldObj]);
                 break;
 
                 case 'table':
                     // Create the table column values
-                    $column1 = esc_html(ActionsNamespace\Duzz_Format_Label::format($field_name));
+                    $column1 = esc_html(ActionsNamespace\Duzz_Format_Label::duzz_format($field_name));
                     $column2 = $field_name;
                     $column3 = new HTMLNamespace\Duzz_Field('input',[
                         'name' => $nameAttribute,
@@ -166,20 +166,20 @@ public function render_form_table(string $page_slug) {
                     ]);
 
                 // Check for duplicate field numbers and display error message
-                if (Duzz_Duplicate_Check::has_duplicate_value($field_value, $saved_field_data)) {
+                if (Duzz_Duplicate_Check::duzz_has_duplicate_value($field_value, $saved_field_data)) {
                     $errorHtml = '<p class="field-error-message" style="color: red;">' . esc_html__('Error: Duplicate field number found.', 'your-textdomain') . '</p>';
                     ob_start();
-                    $column3->render();
+                    $column3->duzz_render();
                     $column3Html = ob_get_clean();
                     $column3 = $column3Html . $errorHtml;
                 } else {
                     ob_start();
-                    $column3->render();
+                    $column3->duzz_render();
                     $column3 = ob_get_clean();
                 }
 
                     // Add the columns to the table
-                    $table->addRow([$column1, $column2, $column3]);
+                    $table->duzz_addRow([$column1, $column2, $column3]);
                     break;
                 // Add more case statements for other field types
             }
@@ -187,7 +187,7 @@ public function render_form_table(string $page_slug) {
         }
 
 
-        return $table->render();
+        return $table->duzz_render();
     }
 
 
@@ -224,25 +224,25 @@ public function sanitize_field_data( $input, $default_field_data ) {
 
 
 
-    public static function get_duzz_settings_field_data(string $option_name) {
-        return get_option($this->get_option_name(), []);
+    public static function duzz_get_duzz_settings_field_data(string $option_name) {
+        return get_option($this->duzz_get_option_name(), []);
     }
 
-      public function get_duzz_connector_field_data() {
-        return get_option( $this->get_option_name(), [] );
+      public function duzz_get_duzz_connector_field_data() {
+        return get_option( $this->duzz_get_option_name(), [] );
     }
 
-      public function field_callback( $args ) {
+      public function duzz_field_callback( $args ) {
     return 'duzz_forms_' . $this->page_name . '_connector_callback';
     }
 
-   public function get_option_name() {
+   public function duzz_get_option_name() {
         // Generate the option name based on the form ID
         return $this->page_name . '_' . $this->section_name . '_field_data';
     }
 
 
-   public function get_section_id() {
+   public function duzz_get_section_id() {
         // Generate the option name based on the form ID
         return 'duzz_forms_' . $this->section_name . '_connector_section';
     }

@@ -9,7 +9,7 @@ class Duzz_Customer_Page_Content extends Duzz_Project_Constructor {
 
     private static $instance = null;
 
-    public static function get_instance() {
+    public static function duzz_get_instance() {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -20,23 +20,23 @@ class Duzz_Customer_Page_Content extends Duzz_Project_Constructor {
         parent::__construct();
     }
 
-    public function addTopUpdates() {
-        parent::addTopUpdates();
+    public function duzz_addTopUpdates() {
+        parent::duzz_addTopUpdates();
 
         // Replacing Div with Duzz_Return_HTML
         $this->welcomeBackMobile = new Duzz_Return_HTML('div', array('class' => 'welcome-back-mobile'));
         
         // Replacing TextNode with Duzz_Return_HTML with empty tag
-        $this->welcomeBackMobile->addChild('', [], 'Hi&nbsp;');
+        $this->welcomeBackMobile->duzz_addChild('', [], 'Hi&nbsp;');
 
         // Using the Duzz_Display_Data class here instead of the shortcode
         $displayData = new Duzz_Display_Data('customer_first_name', 'there');
-        $dataOutput = $displayData->get_display_data();
+        $dataOutput = $displayData->duzz_get_display_data();
         
         // Again, using Duzz_Return_HTML with an empty tag to replace TextNode
-        $this->welcomeBackMobile->addChild('', [], $dataOutput);
-        $this->welcomeBackMobile->addChild('', [], '!');
+        $this->welcomeBackMobile->duzz_addChild('', [], $dataOutput);
+        $this->welcomeBackMobile->duzz_addChild('', [], '!');
 
-        $this->topUpdates->addChild($this->welcomeBackMobile);
+        $this->topUpdates->duzz_addChild($this->welcomeBackMobile);
     }
 }

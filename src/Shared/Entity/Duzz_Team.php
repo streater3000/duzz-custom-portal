@@ -15,14 +15,14 @@ class Duzz_Team {
 	/**
 	 * Add a team.
 	 */
-	static function add( $args ) {
+	static function duzz_add( $args ) {
 		return wp_insert_post( $args );
 	}
 
 	/**
 	 * Get all teams.
 	 */
-	static function get_all( $custom_args = array() ) {
+	static function duzz_get_all( $custom_args = array() ) {
 		$default_args = array(
         'post_type' => 'team',
         'posts_per_page' => -1,
@@ -42,7 +42,7 @@ class Duzz_Team {
 	/**
 	* Archive a team.
 	*/
-	static function archive( $id ) {
+	static function duzz_archive( $id ) {
 		Duzz_Helpers::duzz_update_field( 'field_620e51353811a', 1, $id );
 	}
 

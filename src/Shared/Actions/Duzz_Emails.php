@@ -9,10 +9,10 @@ use Duzz\Core\Duzz_Helpers;
 class Duzz_Emails {
 
     public function __construct() {
-        add_action( 'init', [$this, 'send_customer_invite'] );
+        add_action( 'init', [$this, 'duzz_send_customer_invite'] );
     }
 
-function send_customer_invite() {
+function duzz_send_customer_invite() {
     // Check user capability and nonce
     if (!current_user_can('manage_options')) {
         return; // only allow admins (or any other capability you prefer)
@@ -21,7 +21,7 @@ function send_customer_invite() {
     if (isset($_POST['sendinvite']) && check_admin_referer('sendinvite', '_wpnonce')) {
         $project_id = isset($_POST['project_id']) ? absint(sanitize_text_field($_POST['project_id'])) : 0;
 
-        if (!Duzz_Validate_ID::validate($project_id)) {
+        if (!Duzz_Validate_ID::duzz_validate($project_id)) {
             return; 
         }
 
@@ -43,8 +43,8 @@ function send_customer_invite() {
 
         $email = new Duzz_Email('invite', $data);
 
-if ($email->send() === true) {
-    Duzz_Status_Feed::add_to_status_feed(Duzz_Helpers::duzz_get_name(get_current_user_id()) . ' sent Client invite.', $project_id);
+if ($email->duzz_send() === true) {
+    Duzz_Status_Feed::duzz_add_to_status_feed(Duzz_Helpers::duzz_get_name(get_current_user_id()) . ' sent Client invite.', $project_id);
     
     $redirect_url = site_url("/project/{$project_id}/?sentinvite=true#Info-anchor");
     $nonce_url = htmlspecialchars_decode(wp_nonce_url($redirect_url, 'sentinvite_pass_get_nonce', 'sentinvite-pass-get-nonce'));
@@ -62,4 +62,5 @@ if ($email->send() === true) {
         }
     }
 }
+
 

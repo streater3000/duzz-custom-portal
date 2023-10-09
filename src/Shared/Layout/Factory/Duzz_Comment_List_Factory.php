@@ -31,25 +31,25 @@ class Duzz_Comment_List_Factory {
         $this->feed_textarea = new FactoryNamespace\Duzz_Feed_Textarea($this->post_id, $this->user_id, $this->post_type);
     }
 
-    public function render() {
-        $comment_feed = $this->display_comment_feed();
-        return $comment_feed->render();
+    public function duzz_render() {
+        $comment_feed = $this->duzz_display_comment_feed();
+        return $comment_feed->duzz_render();
     }
 
-    private function display_comment_feed() {
+    private function duzz_display_comment_feed() {
         $status_feed = new Duzz_Return_HTML('div', ['class' => 'duzz_status_feed', 'id' => 'status_feed']);
         
         $this->role = new Duzz_Role();
-        $cu_role = $this->role->get_user_role_by_id(get_current_user_id());
-        $comments_html = $this->format_comments($this->post_id, $cu_role);
+        $cu_role = $this->role->duzz_get_user_role_by_id(get_current_user_id());
+        $comments_html = $this->duzz_format_comments($this->post_id, $cu_role);
 
-        $status_feed->addChild($comments_html);
+        $status_feed->duzz_addChild($comments_html);
 
         return $status_feed;
     }
 
-    private function format_comments($post_id, $cu_role) {
-        $args = $this->get_args();
+    private function duzz_format_comments($post_id, $cu_role) {
+        $args = $this->duzz_get_args();
 
         $comments = $args['comment_query'];
         $total_items = count($comments);
@@ -63,27 +63,27 @@ class Duzz_Comment_List_Factory {
         if (in_array($cu_role, ['duzz_admin', 'no_role', 'administrator'])) {
             if (!empty($this->post_id)) {
                 $feed_textarea = new FactoryNamespace\Duzz_Feed_Textarea($this->post_id, $this->user_id, $this->post_type);
-                $form = $feed_textarea->get_status_feed_form();
-                $chatfeed_title_div = $feed_textarea->get_chatfeed_title_div();
+                $form = $feed_textarea->duzz_get_status_feed_form();
+                $chatfeed_title_div = $feed_textarea->duzz_get_chatfeed_title_div();
 
-                $comments_div->addChild($form);
-                $comments_div->addChild($chatfeed_title_div);
+                $comments_div->duzz_addChild($form);
+                $comments_div->duzz_addChild($chatfeed_title_div);
             }
         }
 
         foreach(array_slice($comments, ($this->paged - 1) * $this->items_per_page, $this->items_per_page) as $comment) {
-            $comment_div = $this->create_comment_div($comment, $cu_role);
-            $comments_div->addChild($comment_div);
+            $comment_div = $this->duzz_create_comment_div($comment, $cu_role);
+            $comments_div->duzz_addChild($comment_div);
         }
 
         $pagination_factory = new FactoryNamespace\Duzz_Pagination_Factory();
-        $pagination = $pagination_factory->create_pagination($list_args, $this->items_per_page, $this->current);
-        $comments_div->addChild($pagination);
+        $pagination = $pagination_factory->duzz_create_pagination($list_args, $this->items_per_page, $this->current);
+        $comments_div->duzz_addChild($pagination);
 
         return $comments_div;
     }
 
-private function get_args() {
+private function duzz_get_args() {
 
     $this->current = max(1, get_query_var('paged'));
     $this->paged = get_query_var('paged') ? get_query_var('paged') : 1;
@@ -122,8 +122,8 @@ private function get_args() {
 }
 
 
-private function create_comment_div($comment, $cu_role) {
-    $display_data = $this->get_comment_display_data($comment, $cu_role);
+private function duzz_create_comment_div($comment, $cu_role) {
+    $display_data = $this->duzz_get_comment_display_data($comment, $cu_role);
     $display_name = $display_data['display_name'];
     $display_role = $display_data['display_role'];
     $newdatetime = $display_data['newdatetime'];
@@ -137,28 +137,29 @@ private function create_comment_div($comment, $cu_role) {
 
 if ($comment_role != 'no_role' && $comment_role != 'duzz_bot') {
     $avatar = get_avatar($email);
-    $comment_div->addChild('div', ['class' => 'comment__avatar'], $avatar);
+    $comment_div->duzz_addChild('div', ['class' => 'comment__avatar'], $avatar);
 }
 
     // Create a new container div for flex alignment
     $info_container = new Duzz_Return_HTML('div', ['class' => 'comment__info-container']);
 
-    $info_container->addChild('div', ['class' => 'comment__author-role'], $display_role);
-    $info_container->addChild('div', ['class' => 'comment__author'], $display_name);
-    $info_container->addChild('div', ['class' => 'comment__date'], $newdatetime);
+    $info_container->duzz_addChild('div', ['class' => 'comment__author-role'], $display_role);
+    $info_container->duzz_addChild('div', ['class' => 'comment__author'], $display_name);
+    $info_container->duzz_addChild('div', ['class' => 'comment__date'], $newdatetime);
 
-            $comment_div->addChild($info_container);
+            $comment_div->duzz_addChild($info_container);
 
-    $comment_div->addChild('div', ['class' => 'comment__content'], $comment_content);
+    $comment_div->duzz_addChild('div', ['class' => 'comment__content'], $comment_content);
 
   if (empty($this->post_id)) {
+
     $link_attributes = array(
-        'href' => site_url('/project/') . $comment->comment_post_ID, // Updated to the new URL structure
+        'href' => site_url('/project/') . $comment->comment_post_ID,
         'target' => '_blank',
         'rel' => 'noopener noreferrer',
     );
     $link_text = 'View Project →';
-    $comment_div->addChild('a', $link_attributes, $link_text);
+    $comment_div->duzz_addChild('a', $link_attributes, $link_text);
 }
 
 
@@ -166,9 +167,9 @@ if ($comment_role != 'no_role' && $comment_role != 'duzz_bot') {
 }
 
 
-private function get_comment_display_data($comment, $cu_role) {
+private function duzz_get_comment_display_data($comment, $cu_role) {
     $author = get_user_by('id', $comment->user_id);
-    $role = $this->role->get_user_role_by_id($comment->user_id);
+    $role = $this->role->duzz_get_user_role_by_id($comment->user_id);
     $display_name = 'Empty';
     $display_role = 'Empty';
     $email = '';  // Initialize the email variable

@@ -9,7 +9,7 @@ class Duzz_Admin {
     private static $instance = null;
     private $menu_slug;
 
-    public static function getInstance($plugin_file, $menu_slug) { 
+    public static function duzz_getInstance($plugin_file, $menu_slug) { 
         if (self::$instance === null) {
             self::$instance = new self($menu_slug); 
         }
@@ -24,12 +24,12 @@ class Duzz_Admin {
             require_once ABSPATH . WPINC . '/rest-api/class-wp-rest-request.php';
         }
 
-        add_action('admin_menu', array($this, 'ActiveAdminMenu'));
+        add_action('admin_menu', array($this, 'duzz_ActiveAdminMenu'));
         add_action('init', array($this, 'duzz_load_select2_assets'));
-        add_action('admin_bar_menu', array($this, 'custom_admin_bar_link'), 999);
+        add_action('admin_bar_menu', array($this, 'duzz_custom_admin_bar_link'), 999);
          add_action('admin_notices', array($this, 'duzz_settings_saved_notice'));
 
-         add_filter('query_vars', array($this, 'add_settings_updated_query_var'));
+         add_filter('query_vars', array($this, 'duzz_add_settings_updated_query_var'));
 
     }
 
@@ -37,7 +37,7 @@ class Duzz_Admin {
         new Duzz_Select2_Enqueue();
     }
 
-    public function add_settings_updated_query_var($vars) {
+    public function duzz_add_settings_updated_query_var($vars) {
         $vars[] = 'settings-updated';
         return $vars;
     }
@@ -54,7 +54,7 @@ public function duzz_settings_saved_notice() {
 }
 
 
-public function custom_admin_bar_link($wp_admin_bar) {
+public function duzz_custom_admin_bar_link($wp_admin_bar) {
     $args = array(
         'id' => 'custom_link', // id of the existing child node (New > Post)
         'title' => 'Duzz Workspace', // alter the title of node
@@ -65,7 +65,7 @@ public function custom_admin_bar_link($wp_admin_bar) {
 }
 
 
-    public function ActiveAdminMenu() {
+    public function duzz_ActiveAdminMenu() {
         // Use $this->menu_slug instead of the hardcoded slug:
         add_menu_page(
             "DuzzClientPortal",

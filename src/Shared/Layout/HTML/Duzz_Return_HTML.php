@@ -18,32 +18,32 @@ class Duzz_Return_HTML {
         $this->attributes = $attributes;
     }
 
-    public function setAttribute($key, $value) {
+    public function duzz_setAttribute($key, $value) {
         if(is_array($value)){
             $value = '';  // set a default value or use implode() to convert the array into a string
         }
         $this->attributes[$key] = $value;
     }
 
-public function addChild($tagOrObject, $attributes = array(), $content = '') {
+public function duzz_addChild($tagOrObject, $attributes = array(), $content = '') {
     if ($tagOrObject instanceof Duzz_Return_HTML) {
         // Directly add the object if it's an instance of Duzz_Return_HTML
         $this->children[] = $tagOrObject;
         return $tagOrObject; // Return the passed object
     } else {
         $child = new Duzz_Return_HTML($tagOrObject, $attributes);
-        $child->setContent($content);
+        $child->duzz_setContent($content);
         $this->children[] = $child;
         return $child;  // Return the new child instance
     }
 }
 
 
-    public function setContent($content) {
+    public function duzz_setContent($content) {
         $this->children = array($content);  // Overrides existing children with content
     }
 
-    public function render() {
+    public function duzz_render() {
     $attributesString = '';
     foreach ($this->attributes as $name => $value) {
         if (is_array($value)) {
@@ -57,7 +57,7 @@ public function addChild($tagOrObject, $attributes = array(), $content = '') {
         $html = '';
         foreach ($this->children as $child) {
             if (is_object($child) && method_exists($child, 'render')) {
-                $html .= $child->render();
+                $html .= $child->duzz_render();
             } else {
                 $html .= $child;
             }
@@ -74,7 +74,7 @@ public function addChild($tagOrObject, $attributes = array(), $content = '') {
 
     foreach ($this->children as $child) {
         if (is_object($child) && method_exists($child, 'render')) {
-            $html .= $child->render();
+            $html .= $child->duzz_render();
         } else {
             $html .= $child;
         }
@@ -87,6 +87,6 @@ public function addChild($tagOrObject, $attributes = array(), $content = '') {
 
 
     public function __toString() {
-        return $this->render();
+        return $this->duzz_render();
     }
 }

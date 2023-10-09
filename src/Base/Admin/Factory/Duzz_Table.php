@@ -13,15 +13,15 @@ class Duzz_Table{
         $this->children = $children;
     }
 
-    public function setAttribute($key, $value) {
+    public function duzz_setAttribute($key, $value) {
         $this->attributes[$key] = $value;
     }
 
-    public function addChild($child) {
+    public function duzz_addChild($child) {
         $this->children[] = $child;
     }
 
-    public function render() {
+    public function duzz_render() {
         $attributesString = '';
 
         foreach ($this->attributes as $name => $value) {
@@ -31,8 +31,8 @@ class Duzz_Table{
         $html = '<' . $this->tag . $attributesString . '>';
 
         foreach ($this->children as $child) {
-            if (is_object($child) && method_exists($child, 'render')) {
-                $html .= $child->render();
+            if (is_object($child) && method_exists($child, 'duzz_render')) {
+                $html .= $child->duzz_render();
             } else {
                 $html .= (string) $child;
             }

@@ -5,7 +5,7 @@ namespace Duzz\Shared\Layout\Factory;
 use Duzz\Shared\Layout\HTML\Duzz_Return_HTML;
 
 class Duzz_Pagination_Factory {
-  public function create_pagination($list_args, $items_per_page = 10, $current) {
+  public function duzz_create_pagination($list_args, $items_per_page = 10, $current) {
     $base = add_query_arg('paged', '%#%'); // Always use 'paged' now
     
     $pagination = new Duzz_Return_HTML('div', ['class' => 'pagination-div', 'id' => 'pagination_div']);
@@ -21,7 +21,7 @@ class Duzz_Pagination_Factory {
     
     $pagination_links = paginate_links($pagination_args);
 
-    $pagination->addChild('div', [], $pagination_links);
+    $pagination->duzz_addChild('div', [], $pagination_links);
 
     return $pagination;
   }

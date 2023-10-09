@@ -5,13 +5,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   </head>
   <body>
-		<div style="max-width: 600px; margin: 10px auto; padding: 15px; font-family: Lato,Helvetica,Arial,Lucida,sans-serif;  border-radius: 30px; border: 3px solid #1395ff; color:#000000; line-height: 1.6; text-align: center; background-color: white;">
+		<div style="max-width: 600px; margin: 10px auto; padding: 15px; font-family: Lato,Helvetica,Arial,Lucida,sans-serif;  border-radius: 30px; border: 3px solid #347EFF; color:#000000; line-height: 1.6; text-align: center; background-color: white;">
 			<div class="email-text" style="text-align: left;font-family: Lato,Helvetica,Arial,Lucida,sans-serif; color:#000000;">
-		    <p>{{ first_name }}, you have been tagged in a message on your website project.</p>
+		    <p>{{ first_name }},</p>
+		    <br>
+		  	<p>You have been tagged in a message on your website project.</p>
 				<p><strong>{{ tagged_by }} says:</strong></p>
-		   " {{ content }} "
-
-		    				<p style="text-align: center; padding:20px;"><b><a href="{{ project_url }}" style="background-color: #23ffa7; font-weight: 900; text-decoration: none;color: white;border: 1px solid #23ffa7;padding: 15px;border-radius: 10px;">Reply to Message</a></b></p>
+				<br>
+		   "{{ content }}"
+		    				<p style="text-align: center; padding:20px;"><b><a href="{{ project_url }}" style="background-color: #23ffa7; font-weight: 900; text-decoration: none;color: white;border: 1px solid #5fe38b;padding: 15px;border-radius: 10px;">Reply to Message</a></b></p>
 			</div>
 		</div>
 	</body>

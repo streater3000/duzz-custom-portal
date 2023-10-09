@@ -15,7 +15,7 @@ class Duzz_Display_Data {
         $this->fallback = sanitize_text_field($fallback);
     }
 
-    public function get_display_data() {
+    public function duzz_get_display_data() {
         // Use get_query_var instead of $_GET
         $project_id = sanitize_text_field(get_query_var('project_id', '')); 
 
@@ -25,7 +25,7 @@ class Duzz_Display_Data {
         }
         
         // Validate
-        if (!Duzz_Validate_ID::validate($project_id)) {
+        if (!Duzz_Validate_ID::duzz_validate($project_id)) {
             return ''; // return empty if invalid
         }
 

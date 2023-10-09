@@ -7,7 +7,7 @@ use Duzz\Core\Duzz_Get_Data;
 use Duzz\Core\Duzz_Helpers;
 
 class Duzz_Project_Update {
-    public function updateProject($project_id) {
+    public function duzz_updateProject($project_id) {
         $archived = Duzz_Helpers::duzz_get_field('archived', $project_id);
         $project_status = Duzz_Helpers::duzz_get_field('project_status', $project_id);
         $approved_status = Duzz_Helpers::duzz_get_field('approved_status', $project_id);
@@ -56,17 +56,17 @@ if (isset($field_object['choices']) && is_array($field_object['choices'])) {
         return array($new_project, $new_project_title);
     }
 
-public function project_update_output() {
+public function duzz_project_update_output() {
     // Use get_query_var instead of directly accessing $_GET
         $project_id = get_query_var('project_id', false);   
 
         // Sanitize and validate the project_id
         $project_id = $project_id ? sanitize_text_field($project_id) : false;
-        if (!$project_id || !Duzz_Validate_ID::validate($project_id)) {
+        if (!$project_id || !Duzz_Validate_ID::duzz_validate($project_id)) {
             return '';
         }
 
-        list($new_project, $new_project_title) = $this->updateProject($project_id);
+        list($new_project, $new_project_title) = $this->duzz_updateProject($project_id);
 
         // Always ensure that any values you're inserting into your HTML are safely escaped
         $new_project = esc_attr($new_project);

@@ -10,7 +10,7 @@ class Duzz_Helpers{
 
 public static function duzz_get_field($field_name, $post_id = false, $format_value = true) {
   if (function_exists('get_field')) {
-    return get_field(Duzz_Get_Data::get_form_id('acf_values_acf_keys_list_field_data', $field_name), $post_id, $format_value);
+    return get_field(Duzz_Get_Data::duzz_get_form_id('duzz_acf_values_acf_keys_list_field_data', $field_name), $post_id, $format_value);
   } else {
     // ACF is not active, handle the error gracefully
     return get_post_meta($post_id, $field_name, true);
@@ -20,7 +20,7 @@ public static function duzz_get_field($field_name, $post_id = false, $format_val
 public static function duzz_update_field($field_name, $value, $post_id = false) {
     if (function_exists('update_field')) {
         // Using ACF's update_field
-        return update_field(Duzz_Get_Data::get_form_id('acf_values_acf_keys_list_field_data', $field_name), $value, $post_id);
+        return update_field(Duzz_Get_Data::duzz_get_form_id('duzz_acf_values_acf_keys_list_field_data', $field_name), $value, $post_id);
     } else {
         // ACF is not active, fallback to WordPress's core function
         return update_post_meta($post_id, $field_name, $value);
@@ -30,7 +30,7 @@ public static function duzz_update_field($field_name, $value, $post_id = false) 
 public static function duzz_get_field_object($field_name, $post_id = false) {
     if (function_exists('get_field_object')) {
         // Using ACF's get_field_object
-        return get_field_object(Duzz_Get_Data::get_form_id('acf_values_acf_keys_list_field_data', $field_name), $post_id);
+        return get_field_object(Duzz_Get_Data::duzz_get_form_id('duzz_acf_values_acf_keys_list_field_data', $field_name), $post_id);
     } else {
         // ACF is not active, return a basic structure with only the value
         $value = get_post_meta($post_id, $field_name, true);
@@ -71,28 +71,28 @@ public static function duzz_create_user( $first_name, $last_name, $email, $passw
 /**
  * Get company_id when we have the team_id
  */
-public static function get_company_by_team_id( $id ) {
+public static function duzz_get_company_by_team_id( $id ) {
 	return duzz_get_field( 'company_id', $id );
 }
 
 /**
  * Get company_id when we have the staff_id
  */
-public static function get_company_by_staff_id( $id ) {
+public static function duzz_get_company_by_staff_id( $id ) {
 	return self::duzz_get_field(\Duzz\Shared\Entity\Duzz_Staff_Keys::$company_id, 'user_' .$id);
 }
 
 /**
  * Get company_id when we have the staff_id
  */
-public static function get_company_by_project_id( $id ) {
-	return duzz_get_field( Duzz_Keys::get_acf_key('company_id'), $id );
+public static function duzz_get_company_by_project_id( $id ) {
+	return duzz_get_field( Duzz_Keys::duzz_get_acf_key('company_id'), $id );
 }
 
 /**
  * Get team_id when we have the staff_id
  */
-public static function get_team_by_staff_id( $id ) {
+public static function duzz_get_team_by_staff_id( $id ) {
 	return self::duzz_get_field(\Duzz\Shared\Entity\Duzz_Staff_Keys::$team_id, 'user_' .$id);
 }
 

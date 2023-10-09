@@ -24,7 +24,7 @@ class Duzz_Table_Factory {
         $this->data_title = $data_title;
     }
 
-public function addColumn($name, $options) {
+public function duzz_addColumn($name, $options) {
     $column = array(
         'name' => $name,
         'options' => array_merge($options, array('name' => $name))
@@ -34,7 +34,7 @@ public function addColumn($name, $options) {
 }
 
 
-    public function addRowClickHandlerScript() {
+    public function duzz_addRowClickHandlerScript() {
         $this->addRowClickHandler = apply_filters('duzz_add_row_click_handler', true);
 
         if ($this->addRowClickHandler) {
@@ -50,19 +50,19 @@ public function addColumn($name, $options) {
     ";
 
             $script = new Duzz_Script($js);
-            $script->render();
+            $script->duzz_render();
         }
     }
 
-    public function render($data, $rowClasses, $post_url) {
+    public function duzz_render($data, $rowClasses, $post_url) {
         // Set local properties based on passed parameters
         $this->data = $data;
         $this->rowClasses = $rowClasses;
         $this->post_url = $post_url;
         
         do_action('duzz_table_factory_before_render_scripts', $this);
-        $this->addRowClickHandlerScript();
-        add_action('table_factory_add_row_click_handler', array($this, 'addRowClickHandlerScript'));
+        $this->duzz_addRowClickHandlerScript();
+        add_action('table_factory_add_row_click_handler', array($this, 'duzz_addRowClickHandlerScript'));
 
         $class = '';
         $optionsName = $this->columns[0]['options']['name'];
@@ -84,61 +84,61 @@ public function addColumn($name, $options) {
         ));
 
         // Add nonce fields to the form
-        $form->addChild('input', array(
+        $form->duzz_addChild('input', array(
             'type' => 'hidden',
             'name' => 'action',
             'value' => 'custom_post_add',
         ));
         
-        $form->addChild('input', array(
+        $form->duzz_addChild('input', array(
             'type' => 'hidden',
             'name' => '_wpnonce',
             'value' => wp_create_nonce('custom_post_add_nonce'),
         ));
 
-        $form->addChild('input', array(
+        $form->duzz_addChild('input', array(
         'type' => 'hidden',
         'name' => 'post_type',
         'value' => $this->post_type,
         ));
 
-        $form->addChild('input', array(
+        $form->duzz_addChild('input', array(
         'type' => 'hidden',
         'name' => 'data_title',
         'value' => $this->data_title,
         ));
 
-        $form->addChild('input', array(
+        $form->duzz_addChild('input', array(
         'type' => 'hidden',
         'name' => 'company_id',
         'value' => '9909',
         ));
 
 
-        $form->addChild('input', array(
+        $form->duzz_addChild('input', array(
         'type' => 'hidden',
         'name' => 'team_id',
         'value' => '9908',
         ));
 
         $staff_id = get_current_user_id();
-        $form->addChild('input', array(
+        $form->duzz_addChild('input', array(
         'type' => 'hidden',
         'name' => 'staff_id',
         'value' => $staff_id,
         ));
 
         // Add the table to the form
-        $table = $form->addChild('table', array('class' => $class));
+        $table = $form->duzz_addChild('table', array('class' => $class));
 
         // Create a row for headers
-        $header_row = $table->addChild('tr', array('class' => $tr_class));
-        $header_row->addChild('th', ['class' => 'view-mobile-green']);
+        $header_row = $table->duzz_addChild('tr', array('class' => $tr_class));
+        $header_row->duzz_addChild('th', ['class' => 'view-mobile-green']);
 
         foreach ($this->columns as $column) {
              $column_name = esc_attr($column['name']);
                 
-                $formatted_label = ActionsNamespace\Duzz_Format_Label::format($column_name);
+                $formatted_label = ActionsNamespace\Duzz_Format_Label::duzz_format($column_name);
                 $column_class = esc_attr(str_replace('_', '-', $column_name));         
 
                 if (isset($column['options']['locked']) && $column['options']['locked']) {
@@ -148,7 +148,7 @@ public function addColumn($name, $options) {
                         'class' => 'submit-button-class',
                         'value' => 'Add'
                     ), 'Add');
-                    $header_row->addChild('th', array('class' => $column_class), $submitButton);
+                    $header_row->duzz_addChild('th', array('class' => $column_class), $submitButton);
                 } else {
                     // Create an input field inside other <th>
                     $input = new Duzz_Return_HTML('input', array(
@@ -159,7 +159,7 @@ public function addColumn($name, $options) {
                         'class' => 'custom-post-field-class',
                         'data-duzz-required' => ''   
                     ));
-                    $header_row->addChild('th', array('class' => $column_class), $input);
+                    $header_row->duzz_addChild('th', array('class' => $column_class), $input);
     }
 }
 
@@ -167,13 +167,13 @@ public function addColumn($name, $options) {
 
             $table = new Duzz_Return_HTML('table', array('class' => $class));
 
-            $header_row = $table->addChild('tr', array('class' => $tr_class));
-            $header_row->addChild('th', ['class' => 'view-mobile-white']);
+            $header_row = $table->duzz_addChild('tr', array('class' => $tr_class));
+            $header_row->duzz_addChild('th', ['class' => 'view-mobile-white']);
             foreach ($this->columns as $column) {
                 $column_class = esc_attr($column['name']);
-                $format_title = ActionsNamespace\Duzz_Format_Label::format($column['name']);
+                $format_title = ActionsNamespace\Duzz_Format_Label::duzz_format($column['name']);
                 $column_title = esc_html($format_title);
-                $header_row->addChild('th', array('class' => $column_class), $column_title);
+                $header_row->duzz_addChild('th', array('class' => $column_class), $column_title);
             }
         }
 
@@ -182,10 +182,10 @@ public function addColumn($name, $options) {
     $href = isset($row['id']) && $this->post_url ? 'data-href="' . $this->post_url . $row['id'] . '"' : '';
     $attributes = array('class' => 'duzz-project-list-row');
     if ($href) {
-        $attributes['data-href'] = site_url('/' . $this->post_type . '/' . $row['id'] . '/');
+        $attributes['data-href'] = ($this->post_url . $row['id'] . '/');
     }
-    $data_row = $table->addChild('tr', $attributes);
-    $data_row->addChild('td', ['class' => 'view-mobile-green']);
+    $data_row = $table->duzz_addChild('tr', $attributes);
+    $data_row->duzz_addChild('td', ['class' => 'view-mobile-green']);
             
             foreach ($this->columns as $index => $column) {
                 $value = isset($row[$column['options']['key']]) ? $row[$column['options']['key']] : '';
@@ -196,17 +196,17 @@ public function addColumn($name, $options) {
                         $classes .= ' ' . $this->rowClasses[$i];
                     }
                 }
-                $label = ActionsNamespace\Duzz_Format_Label::format($column['name']);
+                $label = ActionsNamespace\Duzz_Format_Label::duzz_format($column['name']);
                 $innerHtml = '<span class="label-customer-mobile">' . $label . ':</span><span class="data-customer-mobile"> ' . $value . '</span>';
-                $data_row->addChild('td', array('class' => $classes), $innerHtml);
+                $data_row->duzz_addChild('td', array('class' => $classes), $innerHtml);
             }
         }
 
         // Render the form which will include the table inside it
                if ($this->include_fields === true){
-        $form_html = $form->render();
+        $form_html = $form->duzz_render();
     } else {
-        $form_html = $table->render();
+        $form_html = $table->duzz_render();
     }
         $form_html .= $this->css;
         $form_html .= $this->js;

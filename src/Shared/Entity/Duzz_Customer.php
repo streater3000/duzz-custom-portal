@@ -23,7 +23,7 @@ class Duzz_Customer {
 	/**
 	 * Get all this Customer's projects.
 	 */
-	public function get_projects() {
+	public function duzz_get_projects() {
 		$args = [
 				'post_type'  => 'project',
 				'meta_key'   => 'customer_id',
@@ -35,8 +35,8 @@ class Duzz_Customer {
 	/**
 	 * Check if the Customer only has one project.
 	 */
-	public function has_one_project() {
-		$projects = $this->get_projects();
+	public function duzz_has_one_project() {
+		$projects = $this->duzz_get_projects();
 		if( count( $projects ) === 1 ) {
 			return true;
 		}
@@ -46,15 +46,15 @@ class Duzz_Customer {
 	/**
 	 * Retrieve a single project.
 	 */
-	public function get_project() {
-		$projects = $this->get_projects();
+	public function duzz_get_project() {
+		$projects = $this->duzz_get_projects();
 		return $projects[0];
 	}
 
 	/**
 	* Archive a Customer.
 	*/
-	static function archive( $id ) {
+	static function duzz_archive( $id ) {
 		duzz_update_field( $archived, 1, $id );
 	}
 

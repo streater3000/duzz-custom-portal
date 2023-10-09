@@ -2,7 +2,7 @@
 
 namespace Duzz\Shared\Layout\Pages;
 
-use Duzz\Shared\Layout\HTML\Form_Factory;
+use Duzz\Shared\Layout\HTML\Duzz_Return_HTML;
 use Duzz\Shared\Actions\Duzz_IP_Check;
 use Duzz\Shared\Actions\Duzz_Error;
 
@@ -13,50 +13,51 @@ class Duzz_ResendProject {
     private $form;
 
     public function __construct() {
-        $this->checkInfo();
-        $this->createForm();
-    }
-
-public function render() {
-    $errorMessage = Duzz_Error::list_error_messages();
-
-
-    // Concatenate the error message with the form rendering
-    return $errorMessage . $this->form->render();
+    $this->duzz_checkInfo();
+    $this->duzz_createForm();
 }
 
 
-    private function createForm() {
-        $this->form = new Form_Factory('form', array(
+public function duzz_render() {
+    $errorMessage = Duzz_Error::duzz_list_error_messages();
+
+
+    // Concatenate the error message with the form rendering
+    return $errorMessage . $this->form->duzz_render();
+}
+
+
+    private function duzz_createForm() {
+        $this->form = new Duzz_Return_HTML('form', array(
             'class' => 'duzz-inline-form add-team-member',
             'method' => 'POST',
         ));
 
-        $this->addHiddenFields();
-        $this->addVisibleFields();
-        $this->addSendButton();
+        $this->duzz_addHiddenFields();
+        $this->duzz_addVisibleFields();
+        $this->duzz_addSendButton();
     }
 
-private function addHiddenFields() {
-    $this->form->addChild('input', array(
+private function duzz_addHiddenFields() {
+    $this->form->duzz_addChild('input', array(
         'type' => 'hidden',
         'name' => 'project_id',
         'value' => $this->project_id,
     ));
 
-    $this->form->addChild('input', array(
+    $this->form->duzz_addChild('input', array(
         'type' => 'hidden',
         'name' => 'first_name',
         'value' => $this->first_name,
     ));
 
-    $this->form->addChild('input', array(
+    $this->form->duzz_addChild('input', array(
         'type' => 'hidden',
         'name' => 'action',
         'value' => 'resend_project_email',
     ));
 
-    $this->form->addChild('input', array(
+    $this->form->duzz_addChild('input', array(
         'type' => 'hidden',
         'name' => 'ip',
         'value' => $this->new_ip,
@@ -66,15 +67,15 @@ private function addHiddenFields() {
     $nonce = wp_create_nonce('resend_project_email');
 
     // Add the nonce field to the form
-    $this->form->addChild('input', array(
+    $this->form->duzz_addChild('input', array(
         'type' => 'hidden',
         'name' => '_wpnonce',
         'value' => $nonce,
     ));
 }
 
-    private function addVisibleFields() {
-        $this->form->addChild('input', array(
+    private function duzz_addVisibleFields() {
+        $this->form->duzz_addChild('input', array(
             'type' => 'text',
             'id' => 'project_email_search',
             'name' => 'project_email_search',
@@ -83,7 +84,7 @@ private function addHiddenFields() {
             'class' => 'reset-field-width',
         ));
 
-        $this->form->addChild('input', array(
+        $this->form->duzz_addChild('input', array(
             'type' => 'text',
             'id' => 'project_last_name_search',
             'name' => 'project_last_name_search',
@@ -93,14 +94,14 @@ private function addHiddenFields() {
         ));
     }
 
-    private function addSendButton() {
-        $this->form->addChild('input', array(
+    private function duzz_addSendButton() {
+        $this->form->duzz_addChild('input', array(
             'type' => 'submit',
             'value' => 'Resend Project',
         ));
     }
 
-private function checkInfo() {
+private function duzz_checkInfo() {
     // Getting the project_id from the URL using WordPress get_query_var function
     $this->project_id = absint(get_query_var('project_id', false)); // Set the class property here
 
@@ -109,7 +110,7 @@ private function checkInfo() {
     }
 
     $ip_check = new Duzz_IP_Check();
-    $ip = $ip_check->get_client_ip_address();
+    $ip = $ip_check->duzz_get_client_ip_address();
     $this->new_ip = $ip;
 }
 

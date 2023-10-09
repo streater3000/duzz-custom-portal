@@ -4,7 +4,7 @@ namespace Duzz\Shared\Actions;
 
 class Duzz_IP_Check{
 
-    function get_client_ip_address() {
+    function duzz_get_client_ip_address() {
         $ip = '';
 
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {

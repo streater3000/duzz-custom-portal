@@ -16,14 +16,14 @@ class Duzz_Company {
 	/**
 	 * Add a Company
 	 */
-	static function add( $args ) {
+	static function duzz_add( $args ) {
 		return wp_insert_post( $args );
 	}
 
 	/**
 	 * Get all Companies
 	 */
-	static function get_all() {
+	static function duzz_get_all() {
 		$args = array(
         'post_type' => 'company',
         'posts_per_page' => -1

@@ -5,16 +5,16 @@ namespace Duzz\Base\Admin;
 class Duzz_ACF_Sync {
     
     public function __construct() {
-        add_action('update_option_acf_values_acf_keys_list_field_data', array($this, 'run_on_option_update'), 10, 3);
+        add_action('update_option_duzz_acf_values_acf_keys_list_field_data', array($this, 'duzz_run_on_option_update'), 10, 3);
     }
 
-    public function run_on_option_update($old_value, $new_value, $option) {
+    public function duzz_run_on_option_update($old_value, $new_value, $option) {
         if (is_plugin_active('advanced-custom-fields/acf.php')) {
-            $this->create_acf_field_group_and_field();
+            $this->duzz_create_acf_field_group_and_field();
         }
     }
 
-public function create_acf_field_group_and_field() {
+public function duzz_create_acf_field_group_and_field() {
     if (post_type_exists('acf-field-group') && post_type_exists('acf-field')) {
         // Replace get_page_by_title with a WP_Query for 'acf-field-group' post type
         $args_group = array(
@@ -23,7 +23,7 @@ public function create_acf_field_group_and_field() {
             'posts_per_page' => 1,
         );
         
-        $query_group = new WP_Query($args_group);
+        $query_group = new \WP_Query($args_group);
         
         if (!$query_group->have_posts()) {
             $group_id = wp_insert_post([
@@ -49,7 +49,7 @@ public function create_acf_field_group_and_field() {
                 'posts_per_page' => 1,
             );
             
-            $query_field = new WP_Query($args_field);
+            $query_field = new \WP_Query($args_field);
 
             if (!$query_field->have_posts()) {
                 $field_id = wp_insert_post([

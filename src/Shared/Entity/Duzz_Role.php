@@ -6,7 +6,7 @@ class Duzz_Role {
     /**
      * Returns the user role.
      */
-    function get_user_role() {
+    function duzz_get_user_role() {
         global $current_user;
         $user_roles = (array) $current_user->roles;
         $user_role = $user_roles[0] ?? false;
@@ -21,7 +21,7 @@ class Duzz_Role {
     /**
      * Returns the user role.
      */
-    function get_user_role_by_id($id) {
+    function duzz_get_user_role_by_id($id) {
         if (empty($id)) {
             return 'no_role';
         }
@@ -44,7 +44,7 @@ class Duzz_Role {
     /**
      * Register the role class names filter.
      */
-    function register_role_class_names_filter() {
+    function duzz_register_role_class_names_filter() {
         add_filter('body_class', array($this, 'duzz_role_class_names'));
     }
 }

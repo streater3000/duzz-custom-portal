@@ -14,11 +14,11 @@ class Duzz_ShortcodeNode {
         $this->shortcode = $shortcode;
     }
 
-    public function setAttribute($key, $value) {
+    public function duzz_setAttribute($key, $value) {
         $this->attributes[$key] = $value;
     }
 
-    public function addChild($child, $identifier = null) {
+    public function duzz_addChild($child, $identifier = null) {
         // Call the action hook if it exists
         if ($identifier !== null && has_action("element_child_hook_{$identifier}")) {
             do_action("element_child_hook_{$identifier}", $child);
@@ -33,7 +33,7 @@ class Duzz_ShortcodeNode {
         $this->children[] = $child;
     }
 
-    public function render() {
+    public function duzz_render() {
         // Assuming the shortcode is implemented by the plugin, you would call the WordPress do_shortcode() function to render the shortcode content.
         $shortcode_content = do_shortcode($this->shortcode);
         
@@ -54,6 +54,6 @@ class Duzz_ShortcodeNode {
     }
 
     public function __toString() {
-        return $this->render();
+        return $this->duzz_render();
     }
 }

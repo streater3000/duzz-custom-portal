@@ -4,35 +4,34 @@ namespace Duzz\Base;
 
 use Duzz\Utils\Duzz_Keys;
 
-class Duzz_Activation{
+class Duzz_Activation {
     private $plugin_file;
 
     public function __construct($plugin_file) {
         $this->plugin_file = $plugin_file;
 
-        add_action( 'init', array( $this, 'register_nav_menus' ) );
-
+        add_action('init', array($this, 'duzz_register_nav_menus'));
         add_filter('nav_menu_css_class', array($this, 'duzz_remove_page_item_class'), 9998, 3);
-        add_shortcode('menu', 'print_menu_shortcode');
-        add_action( 'load-nav-menus.php', array( $this, 'auto_nav_creation_primary' ) );
-        $this->run_plugin_activation_hooks();
+        add_action('load-nav-menus.php', array($this, 'duzz_auto_nav_creation_primary'));
+        $this->duzz_run_plugin_activation_hooks();
     }
 
-    public function run_plugin_activation_hooks() {
-        register_activation_hook( $this->plugin_file, array( $this, 'duzz_init' ) );
+    public function duzz_run_plugin_activation_hooks() {
+        register_activation_hook($this->plugin_file, array($this, 'duzz_init'));
     }
 
     function duzz_init() {
-        if ( ! get_option( 'has_run_install_process', false ) ) {
+        if (!get_option('duzz_has_run_install_process', false)) {
             $this->duzz_insert_user();
             $this->duzz_company_plugin_activation();
             $this->duzz_plugin_activation();
-            $this->create_acf_field_group_and_field();
-            update_option( 'has_run_install_process', true );
+            $this->duzz_create_acf_field_group_and_field();
+            update_option('duzz_has_run_install_process', true);
         }
     }
 
-    public function create_acf_field_group_and_field() {
+
+    public function duzz_create_acf_field_group_and_field() {
         if(post_type_exists('acf-field-group') && post_type_exists('acf-field')) {
             $group_id = wp_insert_post([
                 'post_type' => 'acf-field-group',
@@ -60,7 +59,7 @@ class Duzz_Activation{
     }
 
 
- public function register_nav_menus() {
+ public function duzz_register_nav_menus() {
         register_nav_menus( array(
             'duzz-sidebar' => 'Duzz Sidebar'
         ) );
@@ -169,7 +168,7 @@ function duzz_plugin_activation() {
 
 
 
-public function auto_nav_creation_primary()
+public function duzz_auto_nav_creation_primary()
 {
     $name = 'Sidebar Menu';
     $menu_exists = wp_get_nav_menu_object($name);

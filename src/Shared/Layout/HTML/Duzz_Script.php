@@ -11,7 +11,7 @@ class Duzz_Script {
         $this->allowHtml = $allowHtml;
     }
 
-    public function render() {
+    public function duzz_render() {
         if ($this->allowHtml) {
             // If HTML content is allowed, expand the allowed_html list
             $allowed_html = array(

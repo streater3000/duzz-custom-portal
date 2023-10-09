@@ -9,14 +9,14 @@ class Duzz_Select2_Script {
     private static $duzz_select2_used = false;
     
     public function __construct() {
-        add_action('admin_footer', [$this, 'render_select2_javascript']);
+        add_action('admin_footer', [$this, 'duzz_render_select2_javascript']);
     }
 
-    public static function select2_used() {
+    public static function duzz_select2_used() {
         self::$duzz_select2_used = true;
     }
 
-    public function enqueue_select2_script($css_class = 'custom-dropdown') {
+    public function duzz_enqueue_select2_script($css_class = 'custom-dropdown') {
         
         $jsContent_one = "
         jQuery(document).ready(function($) {
@@ -49,12 +49,12 @@ class Duzz_Select2_Script {
         $scriptContent = $jsContent_one . $htmlPart . $jsContent_two;
 
     $script = new Duzz_Script($scriptContent, true);  // 'true' allows HTML content
-    $script->render();
+    $script->duzz_render();
     }
     
-    public function render_select2_javascript() {
+    public function duzz_render_select2_javascript() {
         if (self::$duzz_select2_used) {
-            $this->enqueue_select2_script();
+            $this->duzz_enqueue_select2_script();
         }
     }
 }

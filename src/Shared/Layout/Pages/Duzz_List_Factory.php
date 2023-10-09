@@ -26,7 +26,7 @@ class Duzz_List_Factory {
     $this->include_fields = $include_fields;
   }
 
-public function add_list_args($user_roles, $meta_key, $meta_value) {
+public function duzz_add_list_args($user_roles, $meta_key, $meta_value) {
     if ($user_roles === null || $user_roles === '') {
 if ($meta_value === 'empty') {
     // Search for entities where the meta key either doesn't exist 
@@ -96,14 +96,14 @@ if ($meta_value === 'empty') {
 
 
 
-private function should_apply_args($user_roles) {
+private function duzz_should_apply_args($user_roles) {
     $user = wp_get_current_user();
     $user_roles = (array) $user_roles; // Convert to an array if it's a string
 
     return empty($user_roles) || array_intersect($user_roles, (array) $user->roles);
 }
 
-  public function get_list_args() {
+  public function duzz_get_list_args() {
     $this->list_args['meta_query'] = $this->list_args['meta_query'] ?? [];
 
     $this->list_args['post_type'] = $this->post_type;
@@ -116,35 +116,34 @@ private function should_apply_args($user_roles) {
   }
 
 
-public function get_post_id() {
+public function duzz_get_post_id() {
     $post_id = get_query_var($this->post_type . '_id', false);
 
     return $post_id ? absint($post_id) : null;
 }
 
-  public function get_user_id() {
+
+  public function duzz_get_user_id() {
     $user_id = get_current_user_id();
     return $user_id;
   }
 
-public function create_list() {
+public function duzz_create_list() {
 
-
-    
-  $list_args = $this->get_list_args();
+  $list_args = $this->duzz_get_list_args();
   $items_per_page = $this->items_per_page;
-  $post_id = $this->get_post_id();
-  $user_id = $this->get_user_id();
+  $post_id = $this->duzz_get_post_id();
+  $user_id = $this->duzz_get_user_id();
   $options_name = $this->options_name;
   $post_type = $this->post_type;
   
   if ($this->list_type === 'comments') {
 
     $factory = new FactoryNamespace\Duzz_Comment_List_Factory($list_args, $post_id, $user_id, $items_per_page);
-     $list = $factory->render();
+     $list = $factory->duzz_render();
   } else {
     $factory = new FactoryNamespace\Duzz_Entity_List_Factory($list_args, $post_id, $user_id, $items_per_page);
-    $list = $factory->render();
+    $list = $factory->duzz_render();
 
   }
   

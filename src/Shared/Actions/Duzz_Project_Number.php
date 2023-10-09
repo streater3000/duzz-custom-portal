@@ -3,7 +3,7 @@
 namespace Duzz\Shared\Actions;
 
 class Duzz_Project_Number {
-    public static function generate() {
+    public static function duzz_generate() {
         $yeardate = gmdate("y");
         $monthdate = gmdate("m");
         $daydate = gmdate("d");

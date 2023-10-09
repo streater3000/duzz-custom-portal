@@ -10,7 +10,7 @@ class Duzz_Sanitize {
      * @param string $content The content to sanitize.
      * @return string The sanitized content.
      */
-    public static function custom_kses($content) {
+    public static function duzz_custom_kses($content) {
         $allowed_html = array(
             'div' => array(
                 'class' => array(),

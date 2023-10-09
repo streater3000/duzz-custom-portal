@@ -21,7 +21,7 @@ namespace Duzz\Shared\Actions;
     update_option($list_name . '_args', $this->args);
   }
 
-  public function get_args() {
+  public function duzz_get_args() {
     return $this->args;
   }
 }

@@ -23,30 +23,30 @@ class Duzz_HTML {
     ];
 
     public function __construct($tag, $attributes = [], $children = []) {
-    $this->tag = $this->sanitizeTag($tag);
+    $this->tag = $this->duzz_sanitizeTag($tag);
     $this->attributes = $attributes;
     $this->children = is_array($children) ? $children : [$children];
 }
 
-    protected function sanitizeTag($tag) {
+    protected function duzz_sanitizeTag($tag) {
         if (in_array($tag, $this->allowedTags)) {
             return $tag;
         }
         return 'div'; // Default to 'div' if not allowed
     }
 
-    public function setAttribute($key, $value) {
+    public function duzz_setAttribute($key, $value) {
         $this->attributes[$key] = $value;
     }
 
-    public function addChild($child) {
+    public function duzz_addChild($child) {
         $this->children[] = $child;
     }
 
 
-public function render() {
+public function duzz_render() {
 
-    $allowed_html = $this->getAllowedHtml(); 
+    $allowed_html = $this->duzz_getAllowedHtml(); 
 
     if (in_array($this->tag, $this->selfClosingTags)) {
         echo '<', esc_html($this->tag);
@@ -61,12 +61,12 @@ public function render() {
                 echo ' ', esc_html($name), '="', esc_attr($value), '"';
             }
         echo '>';
-        echo wp_kses($this->getInnerContent(), $allowed_html);
+        echo wp_kses($this->duzz_getInnerContent(), $allowed_html);
         echo '</', esc_html($this->tag), '>';
     }
 }
 
-    protected function getAllowedHtml() {
+    protected function duzz_getAllowedHtml() {
         $allowed_html = array();
         foreach ($this->allowedTags as $tag) {
             $allowed_html[$tag] = array(
@@ -79,11 +79,11 @@ public function render() {
     }
 
 
-    protected function getInnerContent() {
+    protected function duzz_getInnerContent() {
         $content = '';
         foreach ($this->children as $child) {
-            if (is_object($child) && method_exists($child, 'render')) {
-                $content .= $child->render(); // the render method should handle its own escaping
+            if (is_object($child) && method_exists($child, 'duzz_render')) {
+                $content .= $child->duzz_render(); // the render method should handle its own escaping
             } else {
                 $content .= esc_html((string) $child);
             }

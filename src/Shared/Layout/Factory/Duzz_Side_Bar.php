@@ -5,11 +5,11 @@ namespace Duzz\Shared\Layout\Factory;
 class Duzz_Side_Bar {
 
     public function __construct() {
-        add_action('widgets_init', [$this, 'register_duzz_sidebar']);
-        add_action('dynamic_sidebar_before', [$this, 'insert_duzz_menu']);
+        add_action('widgets_init', [$this, 'duzz_register_sidebar']);
+        add_action('dynamic_sidebar_before', [$this, 'duzz_insert_menu']);
     }
 
-    public function register_duzz_sidebar() {
+    public function duzz_register_sidebar() {
         register_sidebar(array(
             'name' => 'Duzz Sidebar',
             'id' => 'duzz-sidebar',
@@ -21,7 +21,7 @@ class Duzz_Side_Bar {
         ));
     }
 
-    public function print_duzz_menu() {
+    public function duzz_print_menu() {
         ob_start();
         wp_nav_menu(array(
             'theme_location' => 'duzz-sidebar',
@@ -34,9 +34,9 @@ class Duzz_Side_Bar {
         return $menu;
     }
 
-    public function insert_duzz_menu($index) {
+    public function duzz_insert_menu($index) {
         if ($index === 'duzz-sidebar') {
-            return $this->print_duzz_menu();
+            return $this->duzz_print_menu();
         }
     }
 }

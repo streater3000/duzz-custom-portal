@@ -8,7 +8,7 @@ use Duzz\Core\Duzz_Get_Data;
 
 class Duzz_Popup_Invite {
 
-    public function invite_customer_button_shortcode() {
+    public function duzz_invite_customer_button_shortcode() {
         // Use get_query_var instead of $_GET
         $project_id = absint(sanitize_text_field(get_query_var('project_id', 0)));
         
@@ -17,7 +17,7 @@ class Duzz_Popup_Invite {
             return;
         }
 
-        if (!Duzz_Validate_ID::validate($project_id)) {
+        if (!Duzz_Validate_ID::duzz_validate($project_id)) {
             return 'Invalid project_id provided';
         }
 
@@ -34,16 +34,16 @@ class Duzz_Popup_Invite {
 
         $default_email_message = 'Hey ' . esc_html( $client_first ) . ', <br><br> You can track the progress of your project here:';
 
-        // 3. Escape Outputs
+        $current_path = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) );       
+
         $output = '
         <div class="flex-email">
           <div class="account-titles">Send to: </div>&nbsp
           <div class="customer-email-shortcode left-account">' . esc_html( $client_email ) . '</div>
         </div>
         <div class="invite-button invite-button-customer">
-          <form method="post" action="' . esc_url( $_SERVER['REQUEST_URI'] ) . '">
+          <form method="post" action="' . esc_url( $current_path ) . '">
             ' . wp_nonce_field( 'sendinvite', '_wpnonce', true, false ) . '
-
             <input type="hidden" name="project_id" value="' . esc_attr( $project_id ) . '"/>
             <input type="hidden" name="client_first" value="' . esc_attr( $client_first ) . '"/>
             <input type="hidden" name="client_last" value="' . esc_attr( $client_last ) . '"/>

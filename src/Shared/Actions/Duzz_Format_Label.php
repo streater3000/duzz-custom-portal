@@ -4,7 +4,7 @@ namespace Duzz\Shared\Actions;
 
 class Duzz_Format_Label {
   
-  public static function format($label) {
+  public static function duzz_format($label) {
     $label = ucwords(str_replace('_', ' ', $label));
     $label = preg_replace('/\bIp\b/', 'IP', $label);
     $label = preg_replace('/\bId\b/', 'ID', $label);
@@ -14,7 +14,7 @@ class Duzz_Format_Label {
     return $label;
   }
 
- public static function format_company_name($company_name) {
+ public static function duzz_format_company_name($company_name) {
     // Initial transformation
     $company_name = ucwords(strtolower($company_name));
 
@@ -43,7 +43,7 @@ class Duzz_Format_Label {
     return $company_name;
   }
 
-public static function format_user_name($user_name) {
+public static function duzz_format_user_name($user_name) {
     $to_upper = ['iii', 'iv', 'vii'];
     $mixed_case = ['jr', 'sr'];
     $prefixes = ['mr', 'mrs', 'ms', 'dr'];
@@ -96,11 +96,11 @@ public static function format_user_name($user_name) {
     ];
 }
 
-public static function format_website($input) {
+public static function duzz_format_website($input) {
     return strtolower($input);
 }
 
-public static function format_address($address1, $address2, $city, $state, $zip) {
+public static function duzz_format_address($address1, $address2, $city, $state, $zip) {
     $formatted_address1 = ucwords(strtolower(trim($address1)));
     $formatted_address2 = ucwords(strtolower(trim($address2)));
     $formatted_city = ucwords(strtolower(trim($city)));

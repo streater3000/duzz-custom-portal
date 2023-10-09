@@ -14,25 +14,25 @@ class Duzz_Stripe_Checkout {
 
     public function __construct() {
         // Determine if Stripe testing is turned on
-        $is_test_mode = Duzz_Get_Data::get_form_id('payment_settings_stripe_toggle_field_data', 'Stripe_Test_API') == 1;
+        $is_test_mode = Duzz_Get_Data::duzz_get_form_id('duzz_payment_settings_stripe_toggle_field_data', 'Stripe_Test_API') == 1;
 
         // Retrieve the appropriate secret key based on testing mode
         if ($is_test_mode) {
-            $this->stripeSecretKey = Duzz_Get_Data::get_form_id('payment_settings_stripe_test_field_data', 'API_secret_key_test');
+            $this->stripeSecretKey = Duzz_Get_Data::duzz_get_form_id('duzz_payment_settings_stripe_test_field_data', 'API_secret_key_test');
         } else {
-            $this->stripeSecretKey = Duzz_Get_Data::get_form_id('payment_settings_stripe_keys_field_data', 'API_secret_key_live');
+            $this->stripeSecretKey = Duzz_Get_Data::duzz_get_form_id('duzz_payment_settings_stripe_keys_field_data', 'API_secret_key_live');
         }
 
         // Initialize Stripe with the fetched secret key
         Stripe::setApiKey($this->stripeSecretKey); 
 
         $this->dataPasser = new Duzz_Data_Passer();
-        add_action('template_redirect', [$this, 'check_for_payment_success']);
+        add_action('template_redirect', [$this, 'duzz_check_for_payment_success']);
 
     }
 
    public function generatePayNowButton($amount, $project_id) {
-        $clientSecret = $this->generateStripePopupContent($amount);
+        $clientSecret = $this->duzz_generateStripePopupContent($amount);
 
         // Error handling, in project we get an error message instead of a client secret
         if (strpos($clientSecret, 'Error:') !== false) {
@@ -45,7 +45,7 @@ class Duzz_Stripe_Checkout {
         return $invoice_table;
     }
 
-    private function generateStripePopupContent($amount) {
+    private function duzz_generateStripePopupContent($amount) {
         // Convert amount to cents (or smallest currency unit).
         $amountInCents = $amount * 100;
 
@@ -66,7 +66,7 @@ class Duzz_Stripe_Checkout {
     }
 
 
-public function check_for_payment_success() {
+public function duzz_check_for_payment_success() {
 
     
     $client_secret = get_query_var('payment_intent_client_secret', null);
@@ -105,7 +105,7 @@ public function check_for_payment_success() {
             
             if ($paymentIntent->status === 'succeeded') {
                 
-                Duzz_Status_Feed::add_to_status_feed('Payment Complete! Total payment amount: ' . $amount, $project_id);
+                Duzz_Status_Feed::duzz_add_to_status_feed('Payment Complete! Total payment amount: ' . $amount, $project_id);
                 update_post_meta($payment_id, 'payment_confirm', 'Completed');
                 
                 $associated_comment_id = get_post_meta($payment_id, 'associated_comment', true);

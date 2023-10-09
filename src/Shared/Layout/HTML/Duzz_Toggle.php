@@ -13,11 +13,11 @@ class Duzz_Toggle {
         $this->toggle_value = $toggle_value;
     }
 
-    public function setAttribute($name, $value) {
+    public function duzz_setAttribute($name, $value) {
         $this->attributes[$name] = $value;
     }
 
-    public function render() {
+    public function duzz_render() {
         echo '<label class="toggle-switch">';
         
         echo '<', esc_html($this->tag); // echo opening tag

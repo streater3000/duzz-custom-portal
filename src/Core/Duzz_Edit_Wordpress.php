@@ -6,7 +6,7 @@ class Duzz_Edit_Wordpress {
 
     public function __construct() {
         add_action('wp', [$this, 'duzz_projects_buffer'], 0);
-        add_action('pre_get_comments', [$this, 'filter_comments']);
+        add_action('pre_get_comments', [$this, 'duzz_filter_comments']);
     }
 
    public function duzz_projects_buffer() {
@@ -25,7 +25,7 @@ class Duzz_Edit_Wordpress {
     }
 
 
-public function filter_comments($query) {
+public function duzz_filter_comments($query) {
     if (!is_admin()) {
         return;
     }

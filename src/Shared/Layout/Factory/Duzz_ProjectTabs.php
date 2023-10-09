@@ -5,7 +5,7 @@ namespace Duzz\Shared\Layout\Factory;
 class Duzz_ProjectTabs {
     private $tabContents = array();
 
-    public function addTabContent($tabContent, $identifier) {
+    public function duzz_addTabContent($tabContent, $identifier) {
         // Apply a filter for the tab label using the provided identifier
         if (!empty($identifier)) {
             $filter_name = "tab_label_filter_{$identifier}";
@@ -17,7 +17,7 @@ class Duzz_ProjectTabs {
         $this->tabContents[] = $tabContent;
     }
 
-public function render() {
+public function duzz_render() {
     $tabs = '';
     $tabContents = '';
     $anchor = '<div id="tab-anchor"></div>';

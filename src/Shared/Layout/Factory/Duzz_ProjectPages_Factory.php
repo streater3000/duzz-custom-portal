@@ -22,33 +22,33 @@ class Duzz_ProjectPages_Factory {
     public function __construct() {
         $this->container = new Duzz_Return_HTML('div', ['class' => 'container']);
         $this->topUpdates = new Duzz_Return_HTML('div', ['class' => 'top-updates']);
-        $this->container->addChild('div', ['class' => 'top-updates']);
+        $this->container->duzz_addChild('div', ['class' => 'top-updates']);
     }
 
-    public function addFlexProgress() {
+    public function duzz_addFlexProgress() {
         $this->flexProgress = new Duzz_Return_HTML('div', ['class' => 'flex-progress']);
-        $this->flexProgress->addChild('div', [], $this->yourProjectStatus->render());
-        $this->flexProgress->addChild('div', [], $this->welcomeBack->render());
-        $this->topUpdates->addChild('div', ['class' => 'flex-progress'], $this->flexProgress->render());
+        $this->flexProgress->duzz_addChild('div', [], $this->yourProjectStatus->duzz_render());
+        $this->flexProgress->duzz_addChild('div', [], $this->welcomeBack->duzz_render());
+        $this->topUpdates->duzz_addChild('div', ['class' => 'flex-progress'], $this->flexProgress->duzz_render());
     }
 
-public function addShowProgressStatusStage() {
+public function duzz_addShowProgressStatusStage() {
     $project_id = absint(get_query_var('project_id', false));
 
-    if (!$project_id || !Duzz_Validate_ID::validate($project_id)) {
+    if (!$project_id || !Duzz_Validate_ID::duzz_validate($project_id)) {
         return 'Invalid project_id provided';
     }
 
     $project_status = Duzz_Helpers::duzz_get_field('project_status', $project_id) ?: '1: Discuss Project';
     
     $addStatusStage = new Duzz_Return_HTML('div', ['class' => 'show-progress-status-stage flex-stage']);
-    $addStatusStage->addChild('span', [], 'Stage&nbsp;' . $project_status);
+    $addStatusStage->duzz_addChild('span', [], 'Stage&nbsp;' . $project_status);
 
     return $addStatusStage;
 }
 
 
-public function addProgressBar() {
+public function duzz_addProgressBar() {
     $combineBar = new Duzz_Return_HTML('div', ['class' => 'progress-bar-creator']);
     $topBar = new Duzz_Return_HTML('div', ['class' => 'progress-bar-shortcode']);
 
@@ -64,13 +64,13 @@ public function addProgressBar() {
             $percentage = ($total_steps > 0) ? ($number[0] * (100 / $total_steps)) : 0;
             $width = ($percentage == 100) ? 'calc(100% - 6px)' : $percentage . '%';
 
-            $topBar->addChild('span', ['class' => 'percentage', 'style' => 'width:' . $width]);
+            $topBar->duzz_addChild('span', ['class' => 'percentage', 'style' => 'width:' . $width]);
         } else {
-            $topBar->addChild('span', ['class' => 'acf-error-message'], "ERROR: ACF Field 'project_status' missing.");
+            $topBar->duzz_addChild('span', ['class' => 'acf-error-message'], "ERROR: ACF Field 'project_status' missing.");
         }
     }
 
-    $combineBar->addChild('div', ['class' => 'progress-bar-shortcode-container'], $topBar->render());
+    $combineBar->duzz_addChild('div', ['class' => 'progress-bar-shortcode-container'], $topBar->duzz_render());
     return $combineBar;
 }
 

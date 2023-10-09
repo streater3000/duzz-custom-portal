@@ -41,7 +41,7 @@ class Duzz_Keys {
         ];
 
 
-public static function get_filtered_fields() {
+public static function duzz_get_filtered_fields() {
     // Replace this array with the actual fields you want to use.
     $fields = array(
             'customer_address1',
@@ -66,15 +66,15 @@ public static function get_filtered_fields() {
     return $fields;
 }
 
-public static function get_keys_removed($keys_to_remove = []) {
+public static function duzz_get_keys_removed($keys_to_remove = []) {
     // Initialize the keys
-    self::init();
+    self::duzz_init();
 
     // Get all the keys
-    $keys = self::get_keys();
+    $keys = self::duzz_get_keys();
 
     // Get the filtered fields from get_filtered_fields method
-    $filtered_fields = self::get_filtered_fields();
+    $filtered_fields = self::duzz_get_filtered_fields();
 
     // Merge both arrays to get a union of keys to remove
     $all_keys_to_remove = array_merge($filtered_fields, $keys_to_remove);
@@ -86,15 +86,15 @@ public static function get_keys_removed($keys_to_remove = []) {
     return $filtered_keys;
 }
 
-    public static function get_filtered_keys() {
+    public static function duzz_get_filtered_keys() {
         // Initialize the keys
-        self::init();
+        self::duzz_init();
 
         // Get the filtered fields
-        $filtered_fields = self::get_filtered_fields();
+        $filtered_fields = self::duzz_get_filtered_fields();
 
         // Get the keys
-        $keys = self::get_keys();
+        $keys = self::duzz_get_keys();
 
         // Filter the keys
         $filtered_keys = array_diff_key($keys, array_flip($filtered_fields));
@@ -103,11 +103,11 @@ public static function get_keys_removed($keys_to_remove = []) {
         return $filtered_keys;
     }
 
-public static function init() {
+public static function duzz_init() {
     global $duzz_forms_acf_values_connector;
 
-    if(is_object($duzz_forms_acf_values_connector) && method_exists($duzz_forms_acf_values_connector, 'get_option_name')) {
-        $option_name = $duzz_forms_acf_values_connector->get_option_name();
+    if(is_object($duzz_forms_acf_values_connector) && method_exists($duzz_forms_acf_values_connector, 'duzz_get_option_name')) {
+        $option_name = $duzz_forms_acf_values_connector->duzz_get_option_name();
         $saved_keys = get_option($option_name, []);
 
         // Override the default keys with the saved keys
@@ -119,12 +119,12 @@ public static function init() {
     }
 }
 
-   public static function get_keys() {
+   public static function duzz_get_keys() {
         return self::$keys;
     }
 
 
-public static function get_field_name($acf_key) {
+public static function duzz_get_field_name($acf_key) {
     // Search for the acf_key in the $keys array
     $field_name = array_search($acf_key, self::$keys);
 
@@ -132,14 +132,14 @@ public static function get_field_name($acf_key) {
     return $field_name !== false ? $field_name : '';
 }
 
-public static function get_field_name_by_acf_key($acf_key) {
+public static function duzz_get_field_name_by_acf_key($acf_key) {
     $field_name = array_search($acf_key, self::$keys);
     return $field_name !== false ? $field_name : '';
 }
 
 
-    public static function get_field_value($field_name, $post_id) {
-        $acf_key = self::get_acf_key($field_name);
+    public static function duzz_get_field_value($field_name, $post_id) {
+        $acf_key = self::duzz_get_acf_key($field_name);
         if (!empty($acf_key)) {
             return duzz_get_field($acf_key, $post_id);
         } else {
@@ -147,7 +147,7 @@ public static function get_field_name_by_acf_key($acf_key) {
         }
     }
 
-    public static function get_acf_key($field_name) {
+    public static function duzz_get_acf_key($field_name) {
         if (isset(self::$keys[$field_name])) {
             return self::$keys[$field_name];
         } else {
@@ -155,7 +155,3 @@ public static function get_field_name_by_acf_key($acf_key) {
         }
     }
 }
-
-// Call the init() function to initialize the class
-// Move this line outside the class definition
-// Keys::init();

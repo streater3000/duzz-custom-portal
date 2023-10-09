@@ -22,14 +22,14 @@ class Duzz_Staff {
 	/**
 	 * Get the user's role.
 	 */
-	public function get_role() {
+	public function duzz_get_role() {
 		return $this->user->roles[0];
 	}
 
 	/**
 	 * Get all this Team members's projects.
 	 */
-	public function get_projects() {
+	public function duzz_get_projects() {
 		$args = [
 				'post_type'  => 'project',
 				'meta_key'   => 'staff_id',
@@ -41,7 +41,7 @@ class Duzz_Staff {
 	/**
 	* Archive team member and remove projects from them.
 	*/
-	static function archive( $id ) {
+	static function duzz_archive( $id ) {
 		Duzz_Helpers::duzz_update_field( Duzz_Staff_Keys::$archived, 1, 'user_' . $id );
 		Duzz_Helpers::duzz_update_field( Duzz_Staff_Keys::$archived_by, get_current_user_id(), 'user_' . $id );
 
@@ -66,7 +66,7 @@ class Duzz_Staff {
 	/**
 	* Restore the user.
 	*/
-	static function unarchive( $id ) {
+	static function duzz_unarchive( $id ) {
 		update_field( Duzz_Staff_Keys::$archived, 0, 'user_' . $id );
 		update_field( Duzz_Staff_Keys::$archived_by, '', 'user_' . $id );
 	}
@@ -74,7 +74,7 @@ class Duzz_Staff {
 	/**
 	* Permenently delete the user.
 	*/
-	static function delete( $id ) {
+	static function duzz_delete( $id ) {
 		require_once( ABSPATH . 'wp-admin/includes/user.php' );
 		return wp_delete_user( $id );
 	}
@@ -82,7 +82,7 @@ class Duzz_Staff {
 	/**
 	* Get all staff.
 	*/
-	static function get_all( $custom_args = array() ) {
+	static function duzz_get_all( $custom_args = array() ) {
 		$default_args = array(
 				'posts_per_page' => -1,
 				'role__in' => ['duzz_admin'],

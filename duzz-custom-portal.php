@@ -3,7 +3,7 @@
  * Plugin Name: Duzz Custom Portal
  * Plugin URI: https://duzz.io
  * Description: A customizable Wordpress customer portal plugin
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Streater Kelley
  * Author URI: https://duzz.io/about-us/
  * Text Domain: duzz-custom-portal
@@ -22,12 +22,11 @@ if (!defined('WPINC')) {
 }
 
 // Define plugin constants.
-define('DUZZ_PLUGIN_VERSION', '1.0.3');
+define('DUZZ_PLUGIN_VERSION', '1.0.4');
 define('DUZZ_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DUZZ_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('DUZZ_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('DUZZ_PLUGIN_BASENAME', plugin_basename(__FILE__));
-
 
 
 // Load Composer autoloader.
@@ -39,31 +38,6 @@ require_once(ABSPATH . 'wp-load.php');
 use Duzz\Base\Duzz_Plugin_Handler;
 $plugin_handler = new Duzz_Plugin_Handler(__FILE__);
 
-// Include Duzz_NotificationPuller.php file
-
 
 remove_filter('comment_text', 'wpautop');
-
-function duzz_notification_table() {
-    global $wpdb;
-    $duzz_db_version = '1';
-    $installed_ver = get_option("duzz_db_version");
-
-    if ($installed_ver != $duzz_db_version) {
-        $table_name = $wpdb->prefix . 'notifications';
-
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            userid mediumint(9) NOT NULL,
-            caseid mediumint(9) NOT NULL,
-            PRIMARY KEY  (id)
-        );";
-
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-
-        update_option("duzz_db_version", $duzz_db_version);
-    }
-}
-
 

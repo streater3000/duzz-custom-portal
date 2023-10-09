@@ -13,15 +13,15 @@ class Duzz_WP_Forms {
         $this->container = new HTML\Duzz_Return_HTML('div', array('class' => 'wp-forms-container'));
     }
 
-    public function render_staff_form() {
-        $form_id_staff = Duzz_Get_Data::get_form_id('admin_form_id_field_data', 'form_id');
+    public function duzz_render_staff_form() {
+        $form_id_staff = Duzz_Get_Data::duzz_get_form_id('duzz_admin_form_id_field_data', 'form_id');
         $shortcode_node = new HTML\Duzz_ShortcodeNode('[wpforms id="' . $form_id_staff . '"]');
-        $this->container->addChild('', [], $shortcode_node);
+        $this->container->duzz_addChild('', [], $shortcode_node);
     }
     
-    public function render_customer_form() {
-        $form_id_customer = Duzz_Get_Data::get_form_id('client_form_id_field_data', 'form_id');
+    public function duzz_render_customer_form() {
+        $form_id_customer = Duzz_Get_Data::duzz_get_form_id('duzz_client_form_id_field_data', 'form_id');
         $shortcode_node = new HTML\Duzz_ShortcodeNode('[wpforms id="' . $form_id_customer . '"]');
-        $this->container->addChild('', [], $shortcode_node);
+        $this->container->duzz_addChild('', [], $shortcode_node);
     }
 }

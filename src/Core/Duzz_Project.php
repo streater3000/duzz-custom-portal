@@ -3,7 +3,7 @@
 namespace Duzz\Core;
 
 
-use Duzz\Utils\Keys;
+use Duzz\Utils\Duzz_Keys;
 /**
  * The Project entity class.
  */
@@ -61,7 +61,7 @@ class Duzz_Project {
 		$project_owner = DUZZ_Staff( $this->staff_id );
 
 		if ( $user->role === 'duzz_subadmin' ) {
-			if ( $current_user->get_company() === $project_owner->get_company() ) {
+			if ( $current_user->get_company() === $project_owner->duzz_get_company() ) {
 				return true;
 			}
 		}

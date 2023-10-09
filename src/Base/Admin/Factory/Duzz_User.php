@@ -11,7 +11,7 @@ class Duzz_User {
 
     function duzz_admin_init($option_name, $old_value, $new_value) {
         // Get the email_options
-        $email_options = get_option('settings_email_settings_field_data', array());
+        $email_options = get_option('duzz_settings_email_settings_field_data', array());
 
         // Get the new admin email and admin name
         $admin_email = isset($email_options['admin_email']) ? $email_options['admin_email'] : '';
@@ -23,7 +23,7 @@ class Duzz_User {
 
     // Capitalize the first letter of each word in the user's name and make the rest lowercase
     $admin_name = ucwords(strtolower($admin_name));
-   $company_name = Duzz_Format_Label::format_company_name($company_name);
+   $company_name = Duzz_Format_Label::duzz_format_company_name($company_name);
 
     // Check if the email or name has changed
     if (get_option('duzz_last_saved_email') !== $admin_email || get_option('duzz_last_saved_name') !== $admin_name || get_option('duzz_last_saved_company_name') !== $company_name) {

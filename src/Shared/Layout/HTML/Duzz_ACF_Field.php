@@ -15,15 +15,15 @@ class Duzz_ACF_Field {
         $this->project_id = $project_id;
         $this->user = wp_get_current_user();
         $this->field_name = $field_name;
-        $this->field_key = Duzz_Keys::get_acf_key($this->field_name);
+        $this->field_key = Duzz_Keys::duzz_get_acf_key($this->field_name);
     }
 
-public function custom_remove_acf_labels($field, $add_placeholder = true) {
+public function duzz_custom_remove_acf_labels($field, $add_placeholder = true) {
     $field['label'] = '';
 
     if ($add_placeholder) {
         // Get the field name by ACF key
-        $field_name = Duzz_Keys::get_field_name_by_acf_key($field['key']);
+        $field_name = Duzz_Keys::duzz_get_field_name_by_acf_key($field['key']);
 
         // Add a placeholder text based on the field name
         $placeholder_text = ucwords(str_replace('_', ' ',  $this->field_name));
@@ -39,7 +39,7 @@ public function custom_remove_acf_labels($field, $add_placeholder = true) {
 }
 
     
-public function render($add_placeholder = true) {
+public function duzz_render($add_placeholder = true) {
 
 if (function_exists('acf_form_head')) {
     if (count(array_intersect($this->user->roles, ['administrator', 'duzz_admin'])) === 0) {
@@ -61,12 +61,12 @@ if (function_exists('acf_form_head')) {
 add_filter('acf/prepare_field', function ($field) use ($add_placeholder) {
     // Add your CSS class here
     $field['wrapper']['class'] .= ' acf-fields-width';
-    return $this->custom_remove_acf_labels($field, $add_placeholder);
+    return $this->duzz_custom_remove_acf_labels($field, $add_placeholder);
 });
 
     acf_form($args);
     remove_filter('acf/prepare_field', function ($field) use ($add_placeholder) {
-        return $this->custom_remove_acf_labels($field, $add_placeholder);
+        return $this->duzz_custom_remove_acf_labels($field, $add_placeholder);
     });
 
 
@@ -83,7 +83,7 @@ add_filter('acf/prepare_field', function ($field) use ($add_placeholder) {
             $label = ucwords(str_replace('_', ' ',  $this->field_name));
 
 
-            $form->addChild('input', array(
+            $form->duzz_addChild('input', array(
                 'type' => 'text',
                 'name' => $this->field_name,
                 'id' => $this->field_name,

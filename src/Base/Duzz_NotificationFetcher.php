@@ -11,37 +11,34 @@ class Duzz_NotificationFetcher {
 
     public function __construct() {
          $this->data_passer = new Duzz_Data_Passer();
-        add_action('in_admin_header', [$this, 'display_notifications']);
-        add_action('duzz_display_notification', [$this, 'display_custom_notification']);
+        add_action('in_admin_header', [$this, 'duzz_display_notifications']);
+        add_action('duzz_display_notification', [$this, 'duzz_display_custom_notification']);
         add_action('wp_enqueue_scripts', [$this, 'duzz_enqueue_frontend_assets']);
-        add_action('wp_ajax_mark_message_as_trashed', [$this, 'ajax_mark_message_as_trashed']);
+        add_action('wp_ajax_mark_message_as_trashed', [$this, 'duzz_ajax_mark_message_as_trashed']);
     }
 
-    public function display_notifications() {
-        error_log("display_notifications was called");
-        $this->fetch_and_display_notification('notice notice-info is-dismissible');
+    public function duzz_display_notifications() {
+        $this->duzz_fetch_and_display_notification('notice notice-info is-dismissible');
     }
 
-    public function display_custom_notification() {
-        $this->fetch_and_display_notification('duzz-custom-notification dismiss-duzz-notification');
+    public function duzz_display_custom_notification() {
+        $this->duzz_fetch_and_display_notification('duzz-custom-notification dismiss-duzz-notification');
     }
 
-    private function fetch_and_display_notification($css_class) {
+    private function duzz_fetch_and_display_notification($css_class) {
         $api_url = self::API_ENDPOINT_URL;
         $response = wp_remote_get(add_query_arg('api_key', self::API_KEY, $api_url));
 
         if (is_wp_error($response)) {
-            error_log('API error: ' . $response->get_error_message()); // log the actual error
             return;
         }
 
         $response_body = wp_remote_retrieve_body($response);
-        error_log('API Response: ' . $response_body); // Log the API response
+
 
         $message_obj = json_decode($response_body);
 
         if (!$message_obj) {
-            error_log('Error decoding API response');
             return;
         }
 
@@ -49,7 +46,6 @@ class Duzz_NotificationFetcher {
 
         if (isset($message_obj->message_text) && !empty(trim($message_obj->message_text))) {
             if (in_array($message_obj->message_id, $trashed_messages)) {
-                error_log('Message with ID ' . $message_obj->message_id . ' is trashed.');
                 return;
             }
 
@@ -59,15 +55,13 @@ class Duzz_NotificationFetcher {
             echo "<div class='" . esc_attr($css_class) . "' data-message-id='" . esc_attr($message_obj->message_id) . "'>";
             echo '<div class="duzz-message-notification-container"><p>' . wp_kses_post($message) . '</p></div>';
 
-            error_log('Displaying message: ' . $message);
-
             if (strpos($css_class, 'dismiss-duzz-notification') !== false) {
                 echo '<span class="duzz-dismiss-icon" style="float:right; cursor:pointer;">&times;</span>';
             }
 
             echo '</div>';
         } else {
-            error_log('No valid message_text in the API response or message_text is empty.');
+
         }
     }
 
@@ -94,8 +88,8 @@ class Duzz_NotificationFetcher {
         }
     }
 
- public function ajax_mark_message_as_trashed() {
-        $message_id = $this->data_passer->retrieve('POST', 'message_id'); // Replaced $_POST with retrieve method
+ public function duzz_ajax_mark_message_as_trashed() {
+        $message_id = $this->data_passer->duzz_retrieve('POST', 'message_id'); // Replaced $_POST with retrieve method
         
         if ($message_id) {
             $trashed_messages = get_option('duzz_trashed_messages', []);
