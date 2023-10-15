@@ -1,9 +1,9 @@
 === Duzz Custom Portal ===
 Contributors: streater3000
-Tags: customer service, interaction, tracking, project management, chat
+Tags: customer service, interaction, tracking, project management, chat, stripe, payments, portal, customer portal, crm, payment, invoice
 Requires at least: 5.7
 Tested up to: 6.3
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,9 @@ Instantly connect with your customers and keep the conversation going with Duzz 
 
 Duzz Custom Portal is designed to help small service-based businesses dynamically interact with their customers right from their website. This powerful, highly customizable plugin comes ready to use out of the box, transforming your website from a static display into a customer outreach and connection tool.
 
-Let your website work for you, helping you secure sales and maintain customer relationships. Don't just wait for contact form submissions - start a chat with potential customers right away. After all, customers are more likely to engage with businesses that connect with them first.
+Distinctively standing apart from other Stripe-integrated platforms, Duzz Custom Portal pioneers a dynamic payment system. Instead of restricting businesses to fixed product prices or generic donation sums, our portal is the first of its kind to empower businesses with per-project invoicing. Tailor your charges with precision, adding line items for every project facet, and presenting your clients with a clear, customized invoice. 
+
+Let your website work for you. Engage in real-time chats, foster stronger customer relationships, and enhance your revenue potential, all in one unified platform. With Duzz Custom Portal, you're not just waiting around for contact form inquiries – you're proactively reaching out, and most importantly, offering a payment flexibility that no other plugin currently offers.
 
 **Features**
 
@@ -95,7 +97,7 @@ This plugin utilizes Composer for dependency management, which means an autoload
 **Featherlight**:
 - Used For: Lightweight jQuery lightbox.
 - Source: [https://github.com/noelboss/featherlight](https://github.com/noelboss/featherlight)
-- Included Version: `duzz-custom-portal/js/featherlight.min.js`
+- Included Version: `duzz-custom-portal/js/featherlight.js`
 
 **Stripe**:
 - Used For: Handling online payments.
@@ -111,7 +113,140 @@ Feel free to review the original, non-altered source on the provided links. Thes
 
 
 
-== Installation ==
+
+== Third-Party Service Integration==
+
+**Stripe**
+
+Our plugin integrates with Stripe to provide enhanced payment functionalities. This means that some data might be transmitted to Stripe's servers when using the payment features of our plugin.
+
+*Service Provider:* Stripe
+
+*Service Link:* [Stripe](https://stripe.com/)
+
+*Purpose of Integration:* Our plugin uses Stripe to handle payments and payment-related functionalities, ensuring secure and efficient transactions for users.
+
+*Data Shared:* The plugin sends payment-related data, such as transaction details and card information, to Stripe. No personal data is stored by our plugin; all sensitive data is handled by Stripe directly.
+
+*Terms of Use:* You can review Stripe's terms of service [here](https://stripe.com/legal).
+
+*Privacy Policy:* For more details on how Stripe handles your data, please refer to their privacy policy [here](https://stripe.com/privacy).
+
+We encourage all users to review Stripe's terms and privacy policy to fully understand how your data is used and protected. By using the payment features of our plugin, you agree to Stripe's terms of service and privacy policy.
+
+
+
+**Duzz Custom Portal: Configuring Stripe**
+
+Our plugin offers a seamless integration with Stripe for improved payment functionalities. To integrate Stripe with the Duzz Custom Portal plugin, follow these steps:
+
+1. **Access the Duzz Custom Portal Admin Menu:**
+- Navigate to your WordPress dashboard.
+- Click on the "Duzz Custom Portal" option in the admin menu.
+
+2. **Navigate to the Stripe Keys Tab:**
+- Within the Duzz Custom Portal menu, select the "Stripe Keys" tab.
+
+3. **Configuring Live Keys:**
+- **API Secret Key Live:**
+  - Visit your Stripe Dashboard to retrieve your live API secret key.
+  - Copy this key and paste it into the "API Secret Key Live" field in the "Stripe Keys" metabox.
+- **API Publishable Key Live:**
+  - In your Stripe Dashboard, find the live API publishable key.
+  - Copy and paste it into the "API Publishable Key Live" field in the "Stripe Keys" metabox.
+
+4. **Configuring Stripe Testing (Optional):**
+- **Toggle Testing:**
+  - Locate the metabox with the testing toggle in the "Stripe Keys" tab.
+  - Turn testing "On" if you wish to use Stripe's testing environment. By default, this is set to "Off".
+- **API Secret Key Test:**
+  - In your Stripe Dashboard, locate your test API secret key.
+  - Copy this key and paste it into the "API Secret Key Test" field in the "Stripe Test" metabox.
+- **API Publishable Key Test:**
+  - In your Stripe Dashboard, locate the test API publishable key.
+  - Copy and paste it into the "API Publishable Key Test" field in the "Stripe Test" metabox.
+
+5. **Save Changes:**
+- Ensure all changes are saved to finalize the Stripe integration with the Duzz Custom Portal plugin.
+
+By completing these steps, you've successfully set up Stripe integration with the Duzz Custom Portal plugin. This allows you to manage payments efficiently and offer a superior user experience.
+
+
+== Stripe Integration Guide: Advanced Features ==
+
+**Sending an invoice to customers for a Stripe payment**
+
+To facilitate payments via Stripe, it's essential to send your customers an invoice. Here's a step-by-step guide on how to do this using Duzz Custom Portal:
+
+1. **Prerequisites:**
+- A WordPress post type of "Project" (a custom post type created by the Duzz Custom Portal) must exist for a customer. This post type should also have an associated "project_id".
+
+2. **Accessing Project Details:**
+- Navigate to the Duzz Workspace in your dashboard.
+- Click on the desired project from the list to view its details.
+
+3. **Navigating to Funds Tab:**
+- Inside the project details, you will notice three tabs.
+- Click on the "Funds" tab.
+
+4. **Creating an Estimate or Invoice:**
+- Under the "Funds" tab, look for the dropdown select titled "type".
+- Choose either "Estimate" or "Invoice" based on your preference.
+  - **Note:** It's recommended to initially create an "Estimate" to send to your customers for approval. Once approved, you can convert this "Estimate" into an "Invoice". Alternatively, you can directly create an "Invoice".
+- The appearance of both "Estimate" and "Invoice" is similar to the customer. However, the "Invoice" has a crucial "Pay Now" button.
+
+5. **Customer Payment:**
+- When the customer clicks the "Pay Now" button on an Invoice, a popup will appear.
+- The popup provides fields for the customer to enter their credit card details.
+- **Important:** Credit card information is not stored on your website or within the Duzz Custom Portal. All transactions strictly adhere to Stripe's guidelines, ensuring the utmost security and reliability. Stripe manages the entire transaction process.
+
+6. **Payment Notification:**
+- Upon a successful payment, your Stripe account will reflect the transaction.
+- Stripe sends a payment notification to the Duzz Custom Portal. This notification indicates a payment has been made, but it only displays the amount you entered in your Estimate/Invoice. Duzz or your website will not receive any other transaction details from Stripe.
+
+**Creating and Managing a Stripe Account**
+
+If you don't have a Stripe account yet, you'll need one to integrate payments with Duzz Custom Portal. Here's how to set it up:
+
+1. **Signup on Stripe:**
+- Visit [Stripe's official website](https://stripe.com/).
+- Click on "Start Now" or "Sign Up" to create your account.
+
+2. **Account Setup:**
+- Follow the on-screen instructions to set up your account, including business information and bank details.
+
+3. **Retrieving API Keys:**
+- Once your account is set up, navigate to the API section in the Stripe dashboard.
+- Here, you'll find both your live and test API keys, which you'll need for the Duzz Custom Portal integration.
+
+Remember always to keep your API keys secure and never share them publicly.
+
+
+== Legal & Security Notice Regarding Stripe Integration ==
+
+**Integration Permission:**
+
+Stripe provides a robust API and encourages developers to integrate its services with their applications, plugins, or platforms. Our integration with Stripe in the Duzz Custom Portal plugin is based on the permissions and guidelines provided by Stripe for such integrations.
+
+**No Direct Association with Stripe:**
+
+While we have integrated Stripe's services into our plugin for enhanced payment functionalities, it's essential to clarify that we have no direct association, partnership, or endorsement from Stripe. Any questions, concerns, or issues related to Stripe's services should be directed to Stripe's official support channels.
+
+**Security Assurance:**
+
+Stripe is known for its rigorous security standards, and we're committed to adhering to them. Here's how we ensure the security of your transactions:
+
+1. **Credit Card Information:** At no point does our plugin or any component of your WordPress site store credit card details. When a user inputs their credit card information, it's directly processed by Stripe. This ensures the highest level of security, as all sensitive data is managed directly by Stripe, which employs state-of-the-art security measures.
+
+2. **Compliance with Stripe's Security Guidelines:** Our integration with Stripe strictly follows their security guidelines. This means that any updates or security practices recommended by Stripe are implemented in our plugin to ensure consistent security.
+
+3. **Data Handling:** While our plugin facilitates the payment process, all the crucial transaction data and processing are handled directly by Stripe. This means that we do not have access to sensitive transaction details, adding an additional layer of privacy and security for the end-users.
+
+We always encourage users and administrators to keep plugins updated and periodically review and ensure the security of their website.
+
+
+
+== Duzz Custom Portal Installation ==
 
 Watch an installation tutorial video here:
 [How to install](https://www.youtube.com/watch?v=RuUSgCTNfrs)

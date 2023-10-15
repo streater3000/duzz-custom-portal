@@ -3,7 +3,7 @@
  * Plugin Name: Duzz Custom Portal
  * Plugin URI: https://duzz.io
  * Description: A customizable Wordpress customer portal plugin
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author: Streater Kelley
  * Author URI: https://duzz.io/about-us/
  * Text Domain: duzz-custom-portal
@@ -22,7 +22,7 @@ if (!defined('WPINC')) {
 }
 
 // Define plugin constants.
-define('DUZZ_PLUGIN_VERSION', '1.0.5');
+define('DUZZ_PLUGIN_VERSION', '1.0.6');
 define('DUZZ_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DUZZ_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('DUZZ_PLUGIN_URL', plugin_dir_url(__FILE__));

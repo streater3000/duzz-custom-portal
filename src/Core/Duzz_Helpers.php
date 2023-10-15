@@ -9,7 +9,7 @@ use Duzz\Shared\Entity\Duzz_Staff_Keys;
 class Duzz_Helpers{
 
 public static function duzz_get_field($field_name, $post_id = false, $format_value = true) {
-  if (function_exists('get_field')) {
+  if (function_exists('acf_form_head')) {
     return get_field(Duzz_Get_Data::duzz_get_form_id('duzz_acf_values_acf_keys_list_field_data', $field_name), $post_id, $format_value);
   } else {
     // ACF is not active, handle the error gracefully
@@ -18,7 +18,7 @@ public static function duzz_get_field($field_name, $post_id = false, $format_val
 }
 
 public static function duzz_update_field($field_name, $value, $post_id = false) {
-    if (function_exists('update_field')) {
+    if (function_exists('acf_form_head')) {
         // Using ACF's update_field
         return update_field(Duzz_Get_Data::duzz_get_form_id('duzz_acf_values_acf_keys_list_field_data', $field_name), $value, $post_id);
     } else {
@@ -28,7 +28,7 @@ public static function duzz_update_field($field_name, $value, $post_id = false) 
 }
 
 public static function duzz_get_field_object($field_name, $post_id = false) {
-    if (function_exists('get_field_object')) {
+    if (function_exists('acf_form_head')) {
         // Using ACF's get_field_object
         return get_field_object(Duzz_Get_Data::duzz_get_form_id('duzz_acf_values_acf_keys_list_field_data', $field_name), $post_id);
     } else {
@@ -254,20 +254,13 @@ public static function duzz_get_role_name( $role ) {
 
 
 public static function duzz_get_name($id) {
-    // Check if ACF is active
-    if (function_exists('get_field')) {
-        $fname = get_field('first_name', 'user_' . absint($id));
-        $lname = get_field('last_name', 'user_' . absint($id));
-    } else {
+
         // If ACF is not active, use WordPress core functions
         $user = get_userdata($id);
-        if ($user) {
+
             $fname = $user->first_name;
             $lname = $user->last_name;
-        } else {
-            return "User not found";
-        }
-    }
+      
     
     return $fname . ' ' . $lname;
 }

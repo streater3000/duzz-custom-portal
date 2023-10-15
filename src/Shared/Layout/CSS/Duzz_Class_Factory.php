@@ -14,6 +14,37 @@ class Duzz_Class_Factory {
     <style type="text/css">
 
 
+ .dismiss-duzz-admin-notification {
+            position: relative;
+        }
+        .duzz-dismiss-icon {
+            position: absolute;
+              top: 0;
+              right: 1px;
+              border: none;
+              margin: 0;
+              padding: 9px;
+              background: 0 0;
+              color: #787c82;
+              cursor: pointer;
+        }
+
+        .duzz-dismiss-icon:before {
+            background: 0 0;
+              color: #787c82;
+              content: "\f153";
+              display: block;
+              font: normal 16px/20px dashicons;
+              speak: never;
+              height: 20px;
+              text-align: center;
+              width: 20px;
+        }
+
+        .duzz-message-notification-container {
+            padding-right: 36px;  /* Give space for the dismiss button */
+        }
+
 /* Hide the default checkbox */
 .toggle-switch input[type="checkbox"] {
   position: absolute;
