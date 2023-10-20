@@ -16,12 +16,23 @@ class Duzz_Layout {
         add_filter('query_vars', array($this, 'duzz_add_custom_query_var'));
     }
 
-
-    public function duzz_register_rewrite_rules() {
+public function duzz_register_rewrite_rules() {
     add_rewrite_tag('%project_id%', '([0-9]+)');
-    add_rewrite_rule('^project/([0-9]+)/?', 'index.php?pagename=project&project_id=$matches[1]', 'top');
-    add_rewrite_rule('^your-project/([0-9]+)/?', 'index.php?pagename=your-project&project_id=$matches[1]', 'top');
+    add_rewrite_tag('%paged%', '([0-9]{1,})');  // Add pagination tag
+    
+    // Rule for project page without pagination
+    add_rewrite_rule('^project/([0-9]+)/?$', 'index.php?pagename=project&project_id=$matches[1]', 'top');
+
+    // Rule for project page with pagination
+    add_rewrite_rule('^project/([0-9]+)/page/([0-9]{1,})/?$', 'index.php?pagename=project&project_id=$matches[1]&paged=$matches[2]', 'top');
+    
+    // Rule for your-project page without pagination
+    add_rewrite_rule('^your-project/([0-9]+)/?$', 'index.php?pagename=your-project&project_id=$matches[1]', 'top');
+
+    // Rule for your-project page with pagination
+    add_rewrite_rule('^your-project/([0-9]+)/page/([0-9]{1,})/?$', 'index.php?pagename=your-project&project_id=$matches[1]&paged=$matches[2]', 'top');
 }
+
 
     public function duzz_add_custom_query_var($vars) {
         $vars[] = "project_id";

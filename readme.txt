@@ -3,7 +3,7 @@ Contributors: streater3000
 Tags: customer service, interaction, tracking, project management, chat, stripe, payments, portal, customer portal, crm, payment, invoice
 Requires at least: 5.7
 Tested up to: 6.3
-Stable tag: 1.0.6
+Stable tag: 1.0.72
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -58,7 +58,7 @@ If you insist on using GoDaddy, try their more expensive Enhance - Web Hosting P
 If you are looking for a smaller, cheaper hosting provider, many don’t allow PHP emails or have caps on the quantity of PHP emails that can be sent per hour. So reach out to a hosting provider first to check as they don’t usually mention this on their website. Many will tell you that they only allow SMTP emails which we currently do not support.
 We recommend Siteground as they allow you to turn off server side caching with their SG Optimizer plugin. They also allow for 300 PHP emails per hour. And they are recommended for security purposes. 
 If you plan to use Siteground, use our referral link to support us:
-[Click here to get a discount](https://www.siteground.com/index.htm?afcode=5140527bb15b2e0193acb4f4b6051009)
+[Click here for our referral](https://www.siteground.com/index.htm?afcode=5140527bb15b2e0193acb4f4b6051009)
 NOTE: Let us know if Duzz works with your hosting provider or not! We will create a list on our website of compatible hosting providers.
 
 
@@ -318,6 +318,7 @@ And add paste these into Choices.
 3: Working
 4: Done
 5: Payment
+6. Completed
 Copy and paste this into Choices if you want for guidance.
 
 8. Now on the main Duzz settings page, in the section Acf Group, this is optional you can leave it as is if you don’t want to use. But if you want the bot to update the status feed when you update fields, you’ll need to get the ACF group name. If you go to ACF and hover over the group name, at the bottom of your browser, you’ll see a URL popup in tiny text. Inside it will say post= and whatever that number is, is the group number. Add this group number to the ACF Group ID 1 field in Duzz Settings. 

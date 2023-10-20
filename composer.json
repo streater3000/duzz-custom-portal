@@ -16,5 +16,13 @@
         "psr-4": {
             "Duzz\\": "src/"
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "rm vendor/select2/select2/docs/themes/learn2/js/clipboard.min.js"
+        ],
+        "post-update-cmd": [
+            "rm vendor/select2/select2/docs/themes/learn2/js/clipboard.min.js"
+        ]
     }
 }

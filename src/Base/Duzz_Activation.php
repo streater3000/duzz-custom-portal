@@ -35,8 +35,10 @@ class Duzz_Activation {
         if(post_type_exists('acf-field-group') && post_type_exists('acf-field')) {
             $group_id = wp_insert_post([
                 'post_type' => 'acf-field-group',
-                'post_title' => 'Duzz Fields',
+                'post_title' => 'Duzz Custom Fields',
                 'post_status' => 'publish',
+                'post_name' => 'group_oi498s89f43',
+                'import_id'  => 9900,
             ]);
 
             $keys = Duzz_Keys::$keys;
@@ -106,7 +108,7 @@ $company_id = wp_insert_post( $args );
             'post_content' => '',
             'post_status'  => 'publish',
             'post_type'    => 'team',
-                'import_id'  => 9908,
+            'import_id'  => 9908,
             'meta_input'   => array(
               'company_id' => $company_id,
                     'archived' => 0,

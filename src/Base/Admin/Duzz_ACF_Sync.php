@@ -30,6 +30,8 @@ public function duzz_create_acf_field_group_and_field() {
                 'post_type' => 'acf-field-group',
                 'post_title' => 'Duzz Fields',
                 'post_status' => 'publish',
+                'post_name' => 'group_oi498s89f43',
+                'import_id'  => 9900,
             ]);
         } else {
             $group_id = $query_group->posts[0]->ID;

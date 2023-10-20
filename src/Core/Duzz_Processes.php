@@ -51,6 +51,29 @@ private function duzz_verify_nonce($nonce_action) {
     }
 }
 
+
+private function duzz_check_for_existing_project($customer_email_value) {
+    // Check if a project post type with the specified email already exists.
+    $existing_project = get_posts([
+        'post_type' => 'project',
+        'meta_query' => [
+            [
+                'key' => 'customer_email',
+                'value' => $customer_email_value,
+                'compare' => '=',
+            ],
+        ],
+        'numberposts' => 1,
+    ]);
+
+    if ($existing_project) {
+        return $existing_project[0]->ID;  // Return the project ID if found
+    }
+
+    return false;  // Return false if no project found
+}
+
+
 public function duzz_update_duzz_fields() {
     
     // Retrieve the post_id
@@ -370,6 +393,14 @@ private function duzz_handle_post_data($invoice_name, $payment_id, $invoice_type
 }
 
 
+protected function duzz_extract_fields_from_numbers($fields, $field_numbers) {
+    $data = [];
+    foreach ($field_numbers as $key => $number) {
+        $data[$key] = $fields[intval($number)];
+    }
+    return $data;
+}
+
 
 /***CUSTOMER CREATE PROJECT***/
 public function duzz_customer_add_project( $fields, $entry, $form_data, $entry_id ) {
@@ -391,7 +422,6 @@ public function duzz_customer_add_project( $fields, $entry, $form_data, $entry_i
         $field_numbers[$saved_value] = Duzz_Get_Data::duzz_get_form_id($option_name, $saved_value);
     }
 
-
     $customer_ip = $fields[ intval($field_numbers['customer_ip']) ];
     $customer_address = $fields[ intval($field_numbers['customer_address']) ];
     $customer_name    = $fields[ intval($field_numbers['customer_name']) ];
@@ -402,6 +432,38 @@ public function duzz_customer_add_project( $fields, $entry, $form_data, $entry_i
     $company_id       = $fields[ intval($field_numbers['company_id']) ];
     $website          = $fields[ intval($field_numbers['website']) ];
 
+
+
+
+    $customer_email_value = strtolower($fields[intval($field_numbers['customer_email'])]['value']);
+
+    $project_id = $this->duzz_check_for_existing_project($customer_email_value);
+
+    if ($project_id) {
+        $customer_last_name_stored = Duzz_Helpers::duzz_get_field('customer_last_name', $project_id);
+        $customer_last_name_submitted = ucwords(strtolower($fields[intval($field_numbers['customer_name'])]['last'])) ?? '';
+
+        $welcome_back_message = 'you already have a project that exists. Need any help?';
+        if ($customer_last_name_stored == $customer_last_name_submitted) {
+            wp_redirect(site_url('/your-project/' . $project_id . '/'));
+            Duzz_Status_Feed::duzz_add_comment_to_status_feed('Hey ' . ucwords(strtolower($customer_name['first'])) . ', ' . $welcome_back_message, $project_id);
+            die();
+        } else {
+            $redirect_url = site_url("/resend-project/?projectexists=true");
+            $nonce_url = htmlspecialchars_decode(wp_nonce_url($redirect_url, 'projectexists_pass_get_nonce', 'projectexists-pass-get-nonce'));
+
+           wp_redirect($nonce_url);
+
+            Duzz_Status_Feed::duzz_add_comment_to_status_feed('Hey ' . ucwords(strtolower($customer_name['first'])) . ', ' . $welcome_back_message, $project_id);
+            die();
+        }
+    }
+
+$field_numbers = apply_filters('duzz_extend_field_numbers', $field_numbers, $fields, $form_data, $entry_id);
+
+// Fetch the form fields based on the extended $field_numbers array.
+$extracted_fields = $this->duzz_extract_fields_from_numbers($fields, $field_numbers);
+extract($extracted_fields);  // This will create variables like $customer_ip, $customer_name, etc.
 
 
 $tracking_id = Duzz_Project_Number::duzz_generate();
@@ -424,30 +486,37 @@ $project_id = $tracking_id;
             'import_id' => $tracking_id,
                 'meta_input'  => [
                 'archived'                  => 0,
-                'customer_ip' => $customer_ip['value'],
+                'customer_ip'               => $customer_ip['value'],
                 'company_id'                => $company_id['value'],
                 'team_id'                   => $team_id['value'],
-                'staff_id'             => $staff_id['value'],
+                'staff_id'                  => $staff_id['value'],
                 'customer_email'            => strtolower($customer_email['value']),
-                'website'            => strtolower($website['value']),          
+                'website'                   => strtolower($website['value']),          
                 'customer_phone'            => $customer_phone['value'],
                 'customer_first_name'       => ucwords(strtolower($customer_name['first'])) ?? '',
                 'customer_last_name'        => ucwords(strtolower($customer_name['last'])) ?? '',
                 'customer_name'             => ucwords(strtolower($customer_name['value'])) ?? '',
-                'customer_address1'                  => $customer_address1,
-                'customer_address2'                  => $customer_address2,
-                'customer_city'                      => $customer_city,
-                'customer_state'                     => $customer_state,
-                'customer_zip'                       => $customer_zip,
+                'customer_address1'         => $customer_address1,
+                'customer_address2'         => $customer_address2,
+                'customer_city'             => $customer_city,
+                'customer_state'            => $customer_state,
+                'customer_zip'              => $customer_zip,
                 'customer_address'          =>  $combined_address,
             ],
         ];
 
+        foreach ($extracted_fields as $field_key => $field_data) {
+            $post_data['meta_input'][$field_key] = isset($field_data['value']) ? $field_data['value'] : '';
+                }
 
         $project_id = wp_insert_post( $post_data );
 
-        Duzz_Status_Feed::duzz_add_to_status_feed( 'Customer Created Account', $project_id );
+        do_action('duzz_after_customer_account_created', $project_id);
 
+        $welcome_message = Duzz_Get_Data::duzz_get_form_id('duzz_settings_welcome_message_field_data', 'message');
+        Duzz_Status_Feed::duzz_add_comment_to_status_feed('Hi ' . ucwords(strtolower($customer_name['first'])) . ', ' . $welcome_message, $project_id);
+
+        Duzz_Status_Feed::duzz_add_to_status_feed( 'You Created a Project', $project_id );
 
          $admin_email_settings = Duzz_Get_Data::duzz_get_form_id('duzz_settings_email_settings_field_data', 'admin_email');
 
@@ -462,11 +531,8 @@ $project_id = $tracking_id;
             $email = new Duzz_Email( 'new-customer', $data );
             $email->duzz_send();
 
-
-        $welcome_message = Duzz_Get_Data::duzz_get_form_id('duzz_settings_welcome_message_field_data', 'message');
-        Duzz_Status_Feed::duzz_add_comment_to_status_feed('Hi ' . ucwords(strtolower($customer_name['first'])) . ', ' . $welcome_message, $project_id);
-
         wp_redirect(site_url('/your-project/' . $project_id . '/'));
+
             die();
     }
 
@@ -616,7 +682,7 @@ public function duzz_resend_project_email() {
                 'email_address' => $search_email,
                 'subject' => 'Resend Project Link!',
                 'first_name' => $customer_name,
-                'login_url' => site_url("/your-project/{$project_id}/"),
+                'project_url' => site_url("/your-project/{$project_id}/"),
                 'staff_name' => Duzz_Helpers::duzz_get_field(Duzz_Staff_Keys::$first_name, 'user_262'),
                 'message' => 'You requested to resend your project link. A project with your email has been found:',
                 'company_sig' => get_the_title(9909),

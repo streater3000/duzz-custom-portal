@@ -181,16 +181,16 @@ public static function duzz_settings_list_data($listType) {
 
         case 'acf_group':
             return array(
-                'ACF_Group_ID_1' => 9927,
+                'ACF_Group_ID_1' => 9900,
                 'ACF_Group_ID_2' => 9961,
                 'ACF_Group_ID_3' => 9965,
             );
 
         case 'remove_keys':
             return array(
-                'ACF_Key_1' => 'field_6399e6ff0cf58',
-                'ACF_Key_2' => 'field_61eead1406b70',
-                'ACF_Key_3' => 'field_643b0cfbcf72c',
+                'ACF_Key_1' => 'field_8e40b9c536d68e',
+                'ACF_Key_2' => 'field_8a80c7d537a68d',
+                'ACF_Key_3' => 'field_8f50b9f539a60c',
             );
         case 'admin_form_id':
             return array(

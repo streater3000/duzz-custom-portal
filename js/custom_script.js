@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 let field = document.getElementById(fieldId);
                 if (!field.value.trim()) {
                     field.style.borderColor = '#e11c1c';
-                    errors[fieldId] = `Error: ${formatFieldName(fieldId)} must be completed`;
+                    errors[fieldId] = `Error: ${formatFieldName(fieldId)} is Empty`;
                 } else {
                     field.style.borderColor = '';
                     field.placeholder = formatFieldName(fieldId); // Reset the placeholder when it's not an error
@@ -36,8 +36,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 
     function formatFieldName(fieldName) {
-        return fieldName
-            .split('_')
+        // Check and remove the word 'customer' if it exists in the fieldName
+        let cleanedFieldName = fieldName.replace(/customer/gi, '').replace(/[_-]/g, ' ');
+
+        // Split by spaces, capitalize each word, and join back
+        return cleanedFieldName
+            .trim() // ensure there are no leading/trailing spaces after removal
+            .split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
     }

@@ -12,7 +12,7 @@ class Duzz_Enqueue {
 
 public function enqueue_scripts() {
     // Existing enqueues
-    wp_enqueue_script('jquery');
+
     wp_enqueue_script('modal_js', DUZZ_PLUGIN_URL . '/js/featherlight.js', array('jquery'), $this->plugin_version, true);
     wp_enqueue_script('custom_script', DUZZ_PLUGIN_URL . '/js/custom_script.js', [], $this->plugin_version, true);
 

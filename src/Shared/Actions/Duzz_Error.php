@@ -28,6 +28,7 @@ class Duzz_Error {
         $message .= self::duzz_print_error_message('resendprojectemail', 'Email resent with Project Link.');
         $message .= self::duzz_print_error_message('failedprojectemail', 'Try again or contact us for help.');
         $message .= self::duzz_print_error_message('sentinvite', 'Customer invite sent.');
+        $message .= self::duzz_print_error_message('projectexists', 'You already have a project. Enter your info to continue:');
         
         return $message;
     }

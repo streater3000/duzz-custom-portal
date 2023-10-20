@@ -60,7 +60,6 @@ public function duzz_addColumn($name, $options) {
         $this->rowClasses = $rowClasses;
         $this->post_url = $post_url;
         
-        do_action('duzz_table_factory_before_render_scripts', $this);
         $this->duzz_addRowClickHandlerScript();
         add_action('table_factory_add_row_click_handler', array($this, 'duzz_addRowClickHandlerScript'));
 
