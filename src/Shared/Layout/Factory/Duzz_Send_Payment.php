@@ -256,4 +256,3 @@ if ($payment_id) {
         return $form;
     }
 }
-

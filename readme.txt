@@ -3,7 +3,7 @@ Contributors: streater3000
 Tags: customer service, interaction, tracking, project management, chat, stripe, payments, portal, customer portal, crm, payment, invoice
 Requires at least: 5.7
 Tested up to: 6.3
-Stable tag: 1.0.72
+Stable tag: 1.0.75
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,8 +38,6 @@ Duzz Custom Portal operates on a zero trust system, so your customers aren't log
 
 For security purposes, limited data is included on the page your customers view. But it is possible to update the code if you know PHP so that fields and data are viewable by the customer. That’s not currently included in the plugin. Duzz is only as secure as your hosting provider and Wordpress security plugins. Avoid storing sensitive customer information. Do not collect social security numbers or other personal ID numbers.
 
-
-
 **Requirements**
 
 While Duzz Custom Portal works out of the box, for full functionality, we suggest the following:
@@ -47,8 +45,6 @@ While Duzz Custom Portal works out of the box, for full functionality, we sugges
 - WPForms basic for simple fields for Name and Email
 - WPForms Plus for fancy fields that allow full Duzz functionality
 - Hosting provider should allow PHP emails as Duzz does not currently use SMTP. -Hosting provider that allows you to turn off server side caching. 
-
-
 
 **Choosing a hosting provider**
 
@@ -60,8 +56,6 @@ We recommend Siteground as they allow you to turn off server side caching with t
 If you plan to use Siteground, use our referral link to support us:
 [Click here for our referral](https://www.siteground.com/index.htm?afcode=5140527bb15b2e0193acb4f4b6051009)
 NOTE: Let us know if Duzz works with your hosting provider or not! We will create a list on our website of compatible hosting providers.
-
-
 
 **Other details** 
 
@@ -78,8 +72,6 @@ http://duzz.io/your-project/?project_id=8817231306050603
 - This plugin works best with WP Forms and Advanced Custom Fields installed. When the plugin is installed, the plugin automatically creates AFC fields if AFC is already installed. Once Duzz Custom Portal is installed, you should add two forms within WP Forms. One for customers to create a project and one for you to create a project. When you create a project it does not send an email yet to your client so you can load all your projects and check all the details before sending them an invite at a later time.
 - The plugin creates a bot that posts automatic updates to the feed when the project is updated. You can choose which data stored by ACF is not added to the feed. 
 
-
-
 == External Libraries ==
 
 This plugin utilizes Composer for dependency management, which means an autoloader is in place for handling PHP classes and libraries. If you're a developer wanting to understand the structure or extend the functionality, be aware of this setup.
@@ -88,11 +80,6 @@ This plugin utilizes Composer for dependency management, which means an autoload
 - Used For: Dependency management for PHP.
 - Source: [https://getcomposer.org/](https://getcomposer.org/)
 - Autoloader Path: `duzz-custom-portal/vendor/autoload.php`
-
-**Tribute.js**:
-- Used For: Enhancing user interactivity and creating mentions.
-- Source: [https://github.com/zurb/tribute](https://github.com/zurb/tribute)
-- Included Version: `duzz-custom-portal/js/tribute.js`
 
 **Featherlight**:
 - Used For: Lightweight jQuery lightbox.
@@ -110,9 +97,6 @@ This plugin utilizes Composer for dependency management, which means an autoload
 - Included Version: `duzz-custom-portal/vendor/select2/select2`
 
 Feel free to review the original, non-altered source on the provided links. These libraries are included in this plugin in good faith, with the intention of enhancing functionality, and all rights and credits belong to their respective authors.
-
-
-
 
 == Third-Party Service Integration==
 
@@ -133,8 +117,6 @@ Our plugin integrates with Stripe to provide enhanced payment functionalities. T
 *Privacy Policy:* For more details on how Stripe handles your data, please refer to their privacy policy [here](https://stripe.com/privacy).
 
 We encourage all users to review Stripe's terms and privacy policy to fully understand how your data is used and protected. By using the payment features of our plugin, you agree to Stripe's terms of service and privacy policy.
-
-
 
 **Duzz Custom Portal: Configuring Stripe**
 
@@ -170,7 +152,6 @@ Our plugin offers a seamless integration with Stripe for improved payment functi
 - Ensure all changes are saved to finalize the Stripe integration with the Duzz Custom Portal plugin.
 
 By completing these steps, you've successfully set up Stripe integration with the Duzz Custom Portal plugin. This allows you to manage payments efficiently and offer a superior user experience.
-
 
 == Stripe Integration Guide: Advanced Features ==
 
@@ -221,7 +202,6 @@ If you don't have a Stripe account yet, you'll need one to integrate payments wi
 
 Remember always to keep your API keys secure and never share them publicly.
 
-
 == Legal & Security Notice Regarding Stripe Integration ==
 
 **Integration Permission:**
@@ -244,8 +224,6 @@ Stripe is known for its rigorous security standards, and we're committed to adhe
 
 We always encourage users and administrators to keep plugins updated and periodically review and ensure the security of their website.
 
-
-
 == Duzz Custom Portal Installation ==
 
 Watch an installation tutorial video here:
@@ -263,8 +241,6 @@ Watch an installation tutorial video here:
 19. Finally, the Project Page sections allows you to choose which data and fields to display on the admin view when viewing a customer project. Main Data should be the data you want to identify your project by. While it allows you to choose up to 4 for each of these, Main Data should only have one selection. If you have four selections for Main Data it won’t look good on the page. So add any other data you want to display in Header Data. Then the last three fields: Info Tab Fields, Updates Tab Fields and Funds Tab Fields you are selecting which fields you can edit data in. These fields are added to each tab. 
 23. Click ‘Save Changes’.
 24. Now you are ready.
-
-
 
 **INSTRUCTIONS TO START USING DUZZ**
 
@@ -287,8 +263,6 @@ Watch an installation tutorial video here:
 9. Now if your project is complete and Advanced Custom Fields is installed, update the 'project_status' to the final stage which should be 'Completed' and update the 'approved_status' to No, Closed - Lost, or Closed - Won and the project will be archived.
 
 10. You can view all archived projects in the archive tab on the Duzz Workspace sidebar.
-
-
 
 **INSTRUCTIONS TO SYNC WITH ACF**
 
@@ -327,9 +301,6 @@ Copy and paste this into Choices if you want for guidance.
 
 10. So alternatively, in the Remove Keys section in the Duzz Portal settings, you can add field keys from ACF that you do not want added by the Bot to the Duzz feed. This is easier if you only have a few fields you don’t want the Bot to update.
 
-
-
-
 **INSTRUCTIONS TO SYNC WITH WP FORMS**
 
 1. You'll want to install WP Forms if you want customers who visit your site to create a project themselves. Otherwise you'll have to create a project in the Duzz Workspace table and then invite your customers.
@@ -343,9 +314,6 @@ Copy and paste this into Choices if you want for guidance.
 5. Each WP Forms field within a form also has an ID. If you click on each field you’ve added to your forms, you’ll see each field ID. You’ll add each of these field IDs to connect the fields to Duzz in the WP Forms Client and WP Forms Admin submenus. Again, if you have the Plus version of WP Forms, you can save some time by going to our website and requesting a a forms file you can upload that will automatically add fields with the default field numbers already added. 
 
 6. Click Save Changes for each submenu page to save your field numbers whether you did it manually or uploaded our pre-created form.
-
-
-
 
 == Frequently Asked Questions ==
 
@@ -397,7 +365,6 @@ No, they are password protected and redirect to the login page. However, make su
 
 Yes, we designed it for all devices. It has a mobile view for you and your customers.
 
-
 == Screenshots ==
 
 1. This Project page shows an individual project for a customer where you can send them updates.
@@ -407,8 +374,17 @@ Yes, we designed it for all devices. It has a mobile view for you and your custo
 5. This is the settings menu for Duzz to set up the settings for your site. Also notice at the top a link to the Duzz Workspace to view your projects.
 
 == Changelog ==
+= 1.0.75 - 2023-10-31 =
+* Updated duzz_generate_invoice_table in Duzz_Processes to use Duzz_Invoice_Table to construct the invoice table.
+* Updated Duzz_Invoice_Table to properly construct the invoice table.
+* Updated generatePayNowButton in Duzz_Stripe_Checkout to use Duzz_Invoice_Table to construct the button.
+* Updated button styling in Duzz_Class_Factory
+
+= 1.0.73 - 2023-10-25 =
+* Added Check for existing projects in duzz_check_for_existing_project function in src/Core/Duzz_Processes.php file
+* Fixed URL formatting with add_rewrite_rule and add_rewrite_tag in src/Shared/Layout/Duzz_Layout.php file
+* Removed clipboard.min.js file from select2 using composer.json file.
 
 = 1.0.0 =
 * Initial release.
 * Modifications based on WordPress review.
-

@@ -50,6 +50,7 @@ class Duzz_Popup_Invite {
             <input type="hidden" name="company_name" value="' . esc_attr( $company_name ) . '"/>
             <input type="hidden" name="client_email" value="' . esc_attr( $client_email ) . '"/>
             <input type="text" name="email_subject" placeholder="Subject"/>
+             ' . apply_filters('duzz_before_send_invite_button', '', $project_id) . ' 
             <textarea type="text" name="email_message" id="email_message">' . esc_textarea( $default_email_message ) . '</textarea>
             <input class="button" type="submit" name="sendinvite" value="Send Invite" />
           </form>
