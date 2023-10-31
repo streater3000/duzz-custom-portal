@@ -4,7 +4,7 @@
 **Tags**: customer service, interaction, tracking, project management, chat, stripe, payments, portal, customer portal, crm, payment, invoice  
 **Requires at least**: 5.7  
 **Tested up to**: 6.3  
-**Stable tag**: 1.0.75
+**Stable tag**: 1.0.76
 **License**: GPLv2 or later  
 **License URI**: [GNU General Public License v2.0](http://www.gnu.org/licenses/gpl-2.0.html)
 
@@ -354,7 +354,11 @@ Yes, Duzz is designed for cross-device compatibility, ensuring a seamless experi
 
 
 ## Changelog
-### 1.0.75 (2023-10-31)
+### 1.0.76 (2023-10-31)
+- **minified**:
+  - featherlight file removed
+
+### 1.0.76 (2023-10-31)
 - **Updated**:
   - duzz_generate_invoice_table in Duzz_Processes to use Duzz_Invoice_Table to construct the invoice table.
 - **Updated**:

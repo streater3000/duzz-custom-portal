@@ -3,7 +3,7 @@ Contributors: streater3000
 Tags: customer service, interaction, tracking, project management, chat, stripe, payments, portal, customer portal, crm, payment, invoice
 Requires at least: 5.7
 Tested up to: 6.3
-Stable tag: 1.0.75
+Stable tag: 1.0.76
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -374,7 +374,10 @@ Yes, we designed it for all devices. It has a mobile view for you and your custo
 5. This is the settings menu for Duzz to set up the settings for your site. Also notice at the top a link to the Duzz Workspace to view your projects.
 
 == Changelog ==
-= 1.0.75 - 2023-10-31 =
+= 1.0.76 - 2023-10-31 =
+* minified featherlight file removed
+
+= 1.0.76 - 2023-10-31 =
 * Updated duzz_generate_invoice_table in Duzz_Processes to use Duzz_Invoice_Table to construct the invoice table.
 * Updated Duzz_Invoice_Table to properly construct the invoice table.
 * Updated generatePayNowButton in Duzz_Stripe_Checkout to use Duzz_Invoice_Table to construct the button.
