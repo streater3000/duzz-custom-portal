@@ -11,33 +11,34 @@ namespace Duzz\Utils;
 
 class Duzz_Keys {
     public static $keys = [
-            'team_id'                   => 'field_8a90f9d230c74e',
-            'company_id'                => 'field_89b0c7a238e61f',
-            'staff_id'                  => 'field_8a09e2d134b70e',
-            'customer_id'               => 'field_8a90b1c738d69b',
-            'archived'                  => 'field_8b09a8c634d70a',
-            'approved_status'           => 'field_8c08e7f539b61d',
-            'project_status'            => 'field_8a80d7e537a69e',
-            'customer_status'           => 'field_8d90e8b536c60c',
-            'staff_notes'               => 'field_8a60c9a538b61f',
-            'customer_first_name'       => 'field_8a20f7c839a78b',
-            'customer_last_name'        => 'field_8e60b8d536a69a',
-            'customer_phone'            => 'field_8a40d7f538b69c',
-            'customer_email'            => 'field_8e50c8e536d60d',
-            'company_name'              => 'field_8f40b9f539a68b',
-            'website'                   => 'field_8a50e8d538b60f',
-            'customer_address'          => 'field_8f50b9f539a60c',
-            'customer_address1'         => 'field_8e30b8d536d61e',
-            'customer_address2'         => 'field_8d20c7e537a78d',
-            'customer_city'             => 'field_8a30f7f539a69f',
-            'customer_state'            => 'field_8a10d6d538b60d',
-            'customer_zip'              => 'field_8c30c7e536d69e',
-            'files_customer_uploaded'   => 'field_8d40b8d538b68c',
-            'files_staff_uploaded'      => 'field_8a60f9f539a69c',
-            'last_updated'              => 'field_8a80c7d537a68d',
-            'pricing_plan'              => 'field_8a40d7e538b68f',
-            'customer_ip'               => 'field_8e40b9c536d68e',
-            'customer_name'             => 'field_8a70d8e538b61a',
+            'team_id'                   => ' ',
+            'company_id'                => ' ',
+            'staff_id'                  => ' ',
+            'customer_id'               => ' ',
+            'archived'                  => ' ',
+            'approved_status'           => ' ',
+            'project_status'            => ' ',
+            'customer_status'           => ' ',
+            'staff_notes'               => ' ',
+            'customer_first_name'       => ' ',
+            'customer_last_name'        => ' ',
+            'customer_phone'            => ' ',
+            'customer_email'            => ' ',
+            'company_name'              => ' ',
+            'website'                   => ' ',
+            'customer_address'          => ' ',
+            'customer_address1'         => ' ',
+            'customer_address2'         => ' ',
+            'customer_city'             => ' ',
+            'customer_state'            => ' ',
+            'customer_zip'              => ' ',
+            'files_customer_uploaded'   => ' ',
+            'files_staff_uploaded'      => ' ',
+            'last_updated'              => ' ',
+            'pricing_plan'              => ' ',
+            'customer_ip'               => ' ',
+            'customer_name'             => ' ',
+            'customer_message'          =>  ' '
     ];
 
 
@@ -65,6 +66,35 @@ public static function duzz_get_filtered_fields() {
 
     return $fields;
 }
+
+    public static function duzz_get_updated_keys() {
+        $option_name = 'duzz_acf_settings_acf_keys_list_field_data';
+        $saved_keys = get_option($option_name, []);
+
+        if (!empty($saved_keys)) {
+            // Replace the default keys with the saved ones
+            foreach ($saved_keys as $field_name => $acf_key) {
+                if (isset(self::$keys[$field_name])) {
+                    self::$keys[$field_name] = $acf_key;
+                }
+            }
+        }
+
+        return self::$keys;
+    }
+
+    public static function duzz_get_saved_acf_key($field_name) {
+        $option_name = 'duzz_acf_settings_acf_keys_list_field_data';
+        $saved_keys = get_option($option_name, []);
+
+        // Check if the field_name exists in the saved keys and return the ACF key
+        if (!empty($saved_keys) && isset($saved_keys[$field_name])) {
+            return $saved_keys[$field_name];
+        } else {
+            // If the field_name is not found, return an empty string
+            return '';
+        }
+    }
 
 public static function duzz_get_keys_removed($keys_to_remove = []) {
     // Initialize the keys

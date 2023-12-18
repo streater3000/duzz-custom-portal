@@ -9,13 +9,14 @@ class Duzz_Forms_Connector {
     private $page_name;
     private $sections = [];
 
-    public function __construct(string $page_name) {
+    public function __construct(string $page_name, $generate_fields = false) {
         $this->page_name = $page_name;
+        $this->generate_fields = $generate_fields;
     }
 
     public function duzz_add_section(array $field_data, string $section_name, $form_type = 'table', $available_selections = null) {
         // create a section object with its own fields
-        $section = new Duzz_Admin_Settings_Sections ($field_data, $this->page_name, $section_name, $this, $form_type, $available_selections); 
+        $section = new Duzz_Admin_Settings_Sections ($field_data, $this->page_name, $section_name, $this, $form_type, $this->generate_fields,$available_selections); 
         // add the section to the array of sections
         $this->sections[$section_name] = $section;
     }
@@ -48,7 +49,6 @@ public function duzz_output_form(string $group_name, string $page_slug) {
     </div>
     <?php
 }
-
 
 
    public function duzz_get_option_group() {

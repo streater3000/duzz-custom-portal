@@ -26,28 +26,44 @@ if (isset($field_object['choices']) && is_array($field_object['choices'])) {
         $new_project = '';
         switch (true) {
 
-            case ($project_status == $highest_number && $approved_status == 'Closed - Won'):
-            $new_project = 'completed-project';
-            $new_project_title = 'Completed';
-            Duzz_Helpers::duzz_update_field( 'archived', 1, $project_id );
-                break;
+            case ($approved_status == 'Under Review' && $project_status == 1):
+            $new_project = 'new-project';
+            $new_project_title = 'New';
+            Duzz_Helpers::duzz_update_field( 'archived', 0, $project_id );
+            break;
 
-            case ($approved_status == 'Yes' || $approved_status == 'Closed - Won'):
+            case ($approved_status == 'Under Review'):
             $new_project = 'display-none-project';
             $new_project_title = 'Working';
             Duzz_Helpers::duzz_update_field( 'archived', 0, $project_id );
             break;
 
-            case ($archived == 1 || $approved_status == 'No' || $approved_status == 'Closed - Lost'):
-            $new_project = 'archived-project';
-            $new_project_title = 'Archived';
-            Duzz_Helpers::duzz_update_field( 'archived', 1, $project_id );
-            break;
-
-            case ($project_status > 1 && $project_status < $highest_number):
+            case ($approved_status == 'Yes'):
             $new_project = 'display-none-project';
             $new_project_title = 'Working';
+            Duzz_Helpers::duzz_update_field( 'archived', 0, $project_id );
             break;
+
+            case ($project_status > 1 && $project_status < $highest_number && $approved_status !== 'No'):
+            $new_project = 'display-none-project';
+            $new_project_title = 'Working';
+            Duzz_Helpers::duzz_update_field( 'archived', 0, $project_id );
+            break;
+
+            case ($project_status == $highest_number && 
+                  preg_match('/\b\w{0,3}w\w{0,3}\b/i', $approved_status) && 
+                  strpos(strtolower($approved_status), 'lost') === false && 
+                  strpos(strtolower($approved_status), 'no') === false):
+                $new_project = 'completed-project';
+                $new_project_title = 'Completed';
+                Duzz_Helpers::duzz_update_field('archived', 1, $project_id);
+                break;
+
+            case ($archived == 1 || $approved_status == 'No' || strpos(strtolower($approved_status), 'lost') !== false):
+                $new_project = 'archived-project';
+                $new_project_title = 'Archived';
+                Duzz_Helpers::duzz_update_field('archived', 1, $project_id);
+                break;
 
             default:
                 $new_project = 'new-project';

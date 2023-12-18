@@ -13,6 +13,28 @@ class Duzz_Class_Factory {
     ?>
     <style type="text/css">
 
+.table-td-column-width-left{
+    width: 250px;
+}
+
+.field-error-message {
+  display: block; /* Makes the span behave like a block-level element */
+  color: red;
+  margin-top: 4px; /* Adds a little space between the input and the error message */
+}
+
+
+/* For most browsers */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 
  .dismiss-duzz-admin-notification {
             position: relative;
@@ -548,7 +570,7 @@ p{
 }
 
 textarea{
-    margin-bottom: 0px!important;
+    margin-bottom: 5px!important;
 }
 
 .status-feed-form textarea{
@@ -614,7 +636,7 @@ textarea{
     text-indent: 15px;
     display: block;
     color: #fff;
-    min-height: 35px;
+
     border-radius: 20px;
 
 }
@@ -934,7 +956,13 @@ background-color: #000!important;
 
 .page-content-flex-container {
   display: flex;
+  min-width: 100%;
 }
+
+.page-content-flex-container .content-container{
+    margin-left:40px;
+}
+
 
 .page-content-flex-container > .sidebar-container {
   flex: 0 0 20%;
@@ -1097,13 +1125,9 @@ display: inline-flex!important;
   display: block!important;
   padding: 8px!important;
 }
-td{
-  display: flex;
 
-}
 td {
   padding: 0px;
-  border-radius: 10px!important;
   border: 3px solid rgb(255, 255, 255);
 }
 
@@ -1124,35 +1148,11 @@ display: block;
 
 
 /*Fields*/
-
-/* Mobile-first approach */
-@media (max-width: 850px) {  /* You can adjust the breakpoint as per your requirements */
-    table.custom-selected-table {
-        width: 100%;  /* Ensure table is full width */
-    }
-    table.custom-selected-table th {
-        display: block;  /* Make each header cell a block-level element */
-        width: 100%;     /* Full width for each cell */
-    }
-    /* If the parent row uses flex, adjust its direction for mobile */
-    table.custom-selected-table tr.custom-selected-tr {
-        flex-direction: column;
-    }
-
-    .custom-selected-tr input[type="text"]{
-    margin-bottom: 5px;
-    }
-    .submit-button-class{
-        margin-bottom: 10px;
-    }
-
-    .view-mobile-green{
-    display: none;
+table.custom-selected-table {
+    min-width: 100%;
 }
-    .page-id-9920 .custom-selected-tr{
-        display: none;
-    }
-}
+
+
 
 
 
@@ -1186,7 +1186,7 @@ textarea {
     background-color: #d7fde7;
     border-radius: 10px!important;
     padding: 8px;
-    max-width: 95%;
+    max-width: 100%;
 }
 
 input.acf-is-prepended{
@@ -1255,11 +1255,25 @@ input[type=submit] {
     color: #ffffff!important;
     font-size: 1em;
     padding: 10px 20px;
-    border-radius: 10px!important;
+    border-radius: 8px!important;
     font-size: 17px!important;
     font-weight: 800!important;
     min-width: 20%;
     margin-top: 0px;
+}
+
+@media screen and (max-width: 649px){
+.invoice-estimate-table-container button{
+    padding: 7px;
+}
+}
+
+.invoice-units-width {
+  max-width: 100px;
+}
+
+.invoice-price-width {
+  max-width: 140px;
 }
 
 .custom-selected-table input[type=submit]{
@@ -1267,21 +1281,26 @@ input[type=submit] {
 }
 
 
-.total-invoice-pricing-container button{
+.duzz-button-container button{
         text-decoration: none!important;
     background-color: #5fe38b!important;
     color: #ffffff!important;
     font-size: 1em;
     padding: 10px 40px;
-    border-radius: 20px!important;
+    border-radius: 8px!important;
     font-size: 17px!important;
     font-weight: 800!important;
     min-width: 20%;
     margin-top: 0px;
 }
 
-.total-invoice-pricing-container button:hover{
+.duzz-button-container button:hover{
     background-color: #9effbe!important;
+}
+
+.duzz-button-container{
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 
@@ -1418,7 +1437,7 @@ right: 60px;
     color: #ffffff!important;
     font-size: 1em;
     padding: 10px 40px;
-    border-radius: 20px!important;
+    border-radius: 8px!important;
  
     font-size: 17px!important;
     font-weight: 800!important;
@@ -1460,7 +1479,7 @@ right: 60px;
 .tablinks {
     display: inline-block;
     background-color: inherit;
-    width: 31%;
+    width: 30%;
     float: left;
     border: none;
     outline: none;
@@ -1479,6 +1498,13 @@ right: 60px;
     border: 5px solid white;
     z-index: 1!important;
 }
+
+@media only screen and (max-width:750px) {
+.tablinks {
+    width:28%;
+}
+    }
+
 .tablinks:hover {
     background-color: #9effbe !important;
 }
@@ -1531,7 +1557,6 @@ border: 5px solid #5fe38b;
 
 .tabs {
     min-width: 100%;
-    min-height: 100px;
 }
 
 /* Style the tab content */
@@ -1661,6 +1686,7 @@ border: 5px solid #5fe38b;
             }
             .comment__content, .mention__content {
                 margin-top: 5px;
+                margin-bottom: 10px;
             }
     .comment__content p{
                 margin-bottom: 10px!important;
@@ -2027,7 +2053,7 @@ margin-bottom:  50px;
     text-indent: 15px;
     display: block;
     color: #fff;
-    min-height: 35px;
+
     border-radius: 20px;
 }
 
@@ -2053,6 +2079,7 @@ margin-bottom:  50px;
 .project-update-margin-top {
   position: absolute;
   right: 60px;
+  margin-top: -10px;
   }
 
 .progress-title {
@@ -2241,11 +2268,15 @@ input[readonly], select[disabled] {
   border-radius: 0 0 20px 20px;
   padding: 20px;
 }
-@media only screen and (max-width:650px) {
+@media only screen and (max-width:850px) {
     .tabcontent th{
         display: none;
     }
     }
+
+.invoice-fields-wrapper{
+    min-width: 100%;
+}
 
 .invoice-fields-wrapper input {
     width: 100%;
@@ -2267,6 +2298,10 @@ input[readonly], select[disabled] {
     text-align: right;
 }
 
+.invoice-info-wrapper{
+    min-width: 100%;
+    margin-bottom: 5px;
+}
 
 .invoice-info-wrapper td,
 .invoice-fields-wrapper td{
@@ -2290,6 +2325,7 @@ input[readonly], select[disabled] {
     margin-bottom: 0px!important;
 }
 
+
 .custom-selected-tr input[type=text], 
 .invoice-info-wrapper input[type=number],
 .invoice-info-wrapper input[type=text], 
@@ -2307,14 +2343,34 @@ input[readonly], select[disabled] {
     background-color: #d7fde7;
     border-radius: 10px!important;
     padding: 8px;
-    width: 98%!important;
-    min-width: 98%!important;
-    max-width: 98%!important;
+    width: 100%!important;
+    min-width: 100%;
+    max-width: 100%;
+    height: 100%!important;
+    max-height: 100%!important;
 }
 
 
+.invoice-info-wrapper input,
+.invoice-info-wrapper select,
+.invoice-fields-wrapper input,
+.invoice-fields-wrapper select,
+.invoice-fields-wrapper textarea {
+    background-color: #d7fde7;
+    border-radius: 10px;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    height: auto; /* Adjust height as needed */
+}
+
 .input-wrapper{
-    width: 98%!important;
+    width: 100%!important;
+}
+
+.invoice-fields-wrapper input,
+.invoice-fields-wrapper select{
+    margin: 2px;
 }
 
 .invoice-fields-wrapper select{
@@ -2323,6 +2379,7 @@ input[readonly], select[disabled] {
     max-width: 90%!important;
 }
 
+.remove-line-item-button,
 .add-line-item-button {
   margin: 1px;
 }
@@ -2342,34 +2399,49 @@ input[readonly], select[disabled] {
 
 .remove-line-item-button{
     background-color: #ff423a!important;
+    border-radius: 10px;
 }
 
+.remove-line-item-button:focus{
+       background-color: #5fe38b; 
+}
+
+.remove-line-item-button:hover{
+       background-color: #9effbe !important; 
+}
 
 
 .input-wrapper {
     position: relative;
-    display: inline-block;
+    display: flex;
+    /* Other styles as needed */
+}
+
+.sales-tax-input {
+    flex-grow: 1;
+    padding-right: 30px; /* Adjust based on icon size */
+    /* Other input styles */
 }
 
 .prepend-icon {
     position: absolute;
-    left: 5px;
     top: 50%;
     transform: translateY(-50%);
     background-color: #5fe38b;
-padding: 7px;
+padding: 5px;
 border-radius: 10px 0px 0px 10px;
-margin-left: -10px;
 }
+
 
 .append-icon {
     position: absolute;
-    right: 5px;
+    right: 0px; /* Adjust as needed */
     top: 50%;
     transform: translateY(-50%);
     background-color: #5fe38b;
-    padding: 7px;
+    padding: 5px;
     border-radius: 0 10px 10px 0;
+    /* Ensure the icon is not too large for the input */
 }
 
 .input-wrapper input {
@@ -2395,8 +2467,6 @@ margin-left: -10px;
 }
 
 .total-invoice-pricing-container{
-      padding: 30px;
-      padding: 5px 30px 0px 30px;
       max-width: 600px;
 }
 
@@ -2465,6 +2535,7 @@ margin-left: -10px;
     border-radius: 10px !important;
     text-align: right;
     border: 3px solid white!important;
+    min-width: 100px;
 }
 
 .invoice-total-border-green td{
@@ -2472,12 +2543,13 @@ margin-left: -10px;
 }
 
 .invoice-total-border{
+        font-size: 12px;
         padding: 8px !important;
         font-weight: 800;
 }
 
 
-    td {
+    .invoice-table-totals-rows td {
         display: table-cell;
     }
 
@@ -2512,6 +2584,119 @@ margin-left: -10px;
 
 }
 
+
+table.invoice-totals-wrapper {
+    min-width: 100%;
+}
+
+/* Mobile-first approach */
+@media (max-width: 850px) {  /* You can adjust the breakpoint as per your requirements */
+    table.custom-selected-table {
+        width: 100%;  /* Ensure table is full width */
+    }
+    table.custom-selected-table th {
+        display: block;  /* Make each header cell a block-level element */
+        width: 100%;     /* Full width for each cell */
+    }
+    /* If the parent row uses flex, adjust its direction for mobile */
+    table.custom-selected-table tr.custom-selected-tr {
+        flex-direction: column;
+    }
+
+    .custom-selected-tr input[type="text"]{
+    margin-bottom: 5px;
+    }
+    .submit-button-class{
+        margin-bottom: 10px;
+    }
+
+    .view-mobile-green{
+    display: none;
+}
+    .page-id-9920 .custom-selected-tr{
+        display: none;
+    }
+
+
+    table.invoice-info-wrapper td {
+    display: block!important;
+    width: 100%;
+    margin:3px;
+}
+
+.invoice-name-row select, 
+.invoice-name-row input {
+    min-width: 99%!important;
+    max-width: 99%!important;
+}
+
+.invoice-fields-wrapper input,
+.invoice-fields-wrapper select,
+.invoice-info-wrapper input,
+.invoice-info-wrapper select {
+    box-sizing: border-box;
+}
+
+
+.invoice-info-wrapper input,
+.invoice-info-wrapper select {
+    width: 100%;
+    /* other properties */
+}
+
+    .invoice-table-line-items-row {
+        display: block;
+        width: 100%;
+    }
+
+    .invoice-table-line-items-row td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .invoice-fields-wrapper input,
+.invoice-fields-wrapper select {
+    width: 100%;
+    box-sizing: border-box; /* This ensures padding and border are included in the width */
+}
+
+.invoice-units-width,
+.invoice-price-width {
+    padding: 0; /* Remove padding if any */
+}
+
+    .invoice-fields-wrapper input[type="text"] {
+        margin-left: 0;
+        width: 100%;
+    }
+
+.invoice-fields-wrapper input,
+    .invoice-fields-wrapper select,
+    .invoice-units-width,
+    .invoice-price-width{
+        max-width:100%!important;
+        width:100%!important;
+    }
+
+    .add-line-item-button {
+    background-color: #5fe38b;
+    border-radius: 10px;
+}
+
+.remove-line-item-button,
+.add-line-item-button {
+    border-radius: 10px;
+    min-width: 100%;
+    height: 30px;
+    margin-bottom: 20px;
+}
+
+}
+
+table{
+    background-color: white;
+}
 
     </style>
     <?php

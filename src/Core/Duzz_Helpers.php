@@ -10,7 +10,7 @@ class Duzz_Helpers{
 
 public static function duzz_get_field($field_name, $post_id = false, $format_value = true) {
   if (function_exists('acf_form_head')) {
-    return get_field(Duzz_Get_Data::duzz_get_form_id('duzz_acf_values_acf_keys_list_field_data', $field_name), $post_id, $format_value);
+    return get_field(Duzz_Get_Data::duzz_get_form_id('duzz_acf_settings_acf_keys_list_field_data', $field_name), $post_id, $format_value);
   } else {
     // ACF is not active, handle the error gracefully
     return get_post_meta($post_id, $field_name, true);
@@ -20,7 +20,7 @@ public static function duzz_get_field($field_name, $post_id = false, $format_val
 public static function duzz_update_field($field_name, $value, $post_id = false) {
     if (function_exists('acf_form_head')) {
         // Using ACF's update_field
-        return update_field(Duzz_Get_Data::duzz_get_form_id('duzz_acf_values_acf_keys_list_field_data', $field_name), $value, $post_id);
+        return update_field(Duzz_Get_Data::duzz_get_form_id('duzz_acf_settings_acf_keys_list_field_data', $field_name), $value, $post_id);
     } else {
         // ACF is not active, fallback to WordPress's core function
         return update_post_meta($post_id, $field_name, $value);
@@ -30,7 +30,7 @@ public static function duzz_update_field($field_name, $value, $post_id = false) 
 public static function duzz_get_field_object($field_name, $post_id = false) {
     if (function_exists('acf_form_head')) {
         // Using ACF's get_field_object
-        return get_field_object(Duzz_Get_Data::duzz_get_form_id('duzz_acf_values_acf_keys_list_field_data', $field_name), $post_id);
+        return get_field_object(Duzz_Get_Data::duzz_get_form_id('duzz_acf_settings_acf_keys_list_field_data', $field_name), $post_id);
     } else {
         // ACF is not active, return a basic structure with only the value
         $value = get_post_meta($post_id, $field_name, true);

@@ -2,7 +2,9 @@
 
 namespace Duzz\Base;
 
+use Duzz\Base\Admin\Duzz_Admin_Menu_Items;
 use Duzz\Utils\Duzz_Keys;
+use Duzz\Shared\Layout\Duzz_Layout;
 
 class Duzz_Activation {
     private $plugin_file;
@@ -17,7 +19,19 @@ class Duzz_Activation {
     }
 
     public function duzz_run_plugin_activation_hooks() {
-        register_activation_hook($this->plugin_file, array($this, 'duzz_init'));
+        register_activation_hook($this->plugin_file, function() {
+            $this->duzz_init(); // Call your init method
+            $this->duzz_auto_nav_creation_primary(); // Call your menu setup function
+            $this->duzz_save_default_connector_settings();
+            $this->duzz_set_default_acf_keys(); // Call the function to set default ACF keys
+            
+            // Add custom rewrite rules
+            $duzz_layout = new Duzz_Layout();
+            $duzz_layout->duzz_register_rewrite_rules();
+            
+            // Flush rewrite rules after adding new rules
+            flush_rewrite_rules();
+        });
     }
 
     function duzz_init() {
@@ -25,40 +39,35 @@ class Duzz_Activation {
             $this->duzz_insert_user();
             $this->duzz_company_plugin_activation();
             $this->duzz_plugin_activation();
-            $this->duzz_create_acf_field_group_and_field();
+            
             update_option('duzz_has_run_install_process', true);
         }
     }
 
+    private function duzz_set_default_acf_keys() {
+        $default_keys = Duzz_Keys::$keys;
+        update_option('duzz_acf_settings_acf_keys_list_field_data', $default_keys);
+    }
 
-    public function duzz_create_acf_field_group_and_field() {
-        if(post_type_exists('acf-field-group') && post_type_exists('acf-field')) {
-            $group_id = wp_insert_post([
-                'post_type' => 'acf-field-group',
-                'post_title' => 'Duzz Custom Fields',
-                'post_status' => 'publish',
-                'post_name' => 'group_oi498s89f43',
-                'import_id'  => 9900,
-            ]);
+public function duzz_save_default_connector_settings() {
+    $all_settings = Duzz_Admin_Menu_Items::duzz_settings_list_data();
 
-            $keys = Duzz_Keys::$keys;
-            
-            foreach($keys as $name => $key) {
-                $field_id = wp_insert_post([
-                    'post_type' => 'acf-field',
-                    'post_title' => ucwords(str_replace('_', ' ', $name)), // Convert the name to a label
-                    'post_name' => $key,
-                    'post_excerpt' => $name,
-                    'post_status' => 'publish',
-                    'post_parent' => $group_id,
-                ]);
-
-                update_post_meta($field_id, 'field_type', 'text'); // Change this to match your needs
-                update_post_meta($field_id, 'field_key', $key);
-                update_post_meta($field_id, 'field_name', $name);
+    foreach ($all_settings as $page_name => $sections) {
+        foreach ($sections as $section_name => $section_data) {
+            if (isset($section_data['data'])) {
+                $settings_to_save = $section_data['data'];
+                // Construct the option name to save the settings
+                $option_name = $page_name . '_' . $section_name . '_field_data';
+                // Save the settings data
+                $update_result = update_option($option_name, $settings_to_save);
             }
         }
     }
+
+    // Optionally, flush rewrite rules or perform other setup tasks.
+    flush_rewrite_rules();
+}
+
 
 
  public function duzz_register_nav_menus() {
@@ -233,10 +242,9 @@ public function duzz_auto_nav_creation_primary()
         update_post_meta($logout_menu_item_id, '_menu_item_visibility', 'logged_in');
 
 
-        $locations = get_theme_mod('nav_menu_locations');
-        $locations['duzz-sidebar'] = $menu->term_id;
-        $locations['footer-menu-location'] = $footer_menu_id;
-        set_theme_mod('nav_menu_locations', $locations);
+        $locations = get_nav_menu_locations();
+    $locations['duzz-sidebar'] = $menu->term_id;
+    set_theme_mod('nav_menu_locations', $locations);
     }
 }
 
@@ -289,7 +297,7 @@ $owner_data = array(
 'user_login' => 'adminowner',
 'user_nicename' => 'Owner',
 'user_url' => '',
-'user_email' => 'bot@help@duzz.io.io',
+'user_email' => 'bot@help@duzz.io',
 'display_name' => 'Owneradmin',
 'nickname' => 'admin',
 'first_name' => 'Admin',

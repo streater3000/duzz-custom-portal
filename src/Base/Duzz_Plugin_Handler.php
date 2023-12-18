@@ -39,6 +39,7 @@ class Duzz_Plugin_Handler
         new Duzz_User();
          Duzz_Caps::duzz_init();
         Duzz_Admin_Menu_Items::duzz_create_forms_connectors();
+        Duzz_Admin_Menu_Items::initialize_connectors();
         new Duzz_Status_Feed();
         new Duzz_Redirect();
         new Duzz_Edit_Wordpress();

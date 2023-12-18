@@ -104,16 +104,28 @@ protected function duzz_renderBody() {
     foreach ($this->rows as $columns) {
         $tr = new HTMLNamespace\Duzz_Table('tr');
 
-        foreach ($columns as $column) {
+        foreach ($columns as $index => $column) {
             $td = new HTMLNamespace\Duzz_Table('td');
 
-    if (is_object($column) && method_exists($column, 'duzz_render')) {
-        $columnContent = $column->duzz_render();
-        $td->duzz_setContent($columnContent);
-        } else {
-                $td->duzz_addChild($column);
-                $tr->duzz_addChild($td);
+            // Retrieve existing class attribute if any
+            $existingClass = isset($td->attributes['class']) ? $td->attributes['class'] . ' ' : '';
+
+            // If it's the first column, add 'table-td-column-width-left' class
+            if ($index === 0) {
+                $td->duzz_setAttribute('class', $existingClass . 'table-td-column-width-left');
+            } else {
+                // For other columns, add 'table-td-column-width' class
+                $td->duzz_setAttribute('class', $existingClass . 'table-td-column-width');
             }
+
+            if (is_object($column) && method_exists($column, 'duzz_render')) {
+                $columnContent = $column->duzz_render();
+                $td->duzz_setContent($columnContent);
+            } else {
+                $td->duzz_addChild($column);
+            }
+
+            $tr->duzz_addChild($td);
         }
 
         $tbody->duzz_addChild($tr);
@@ -121,5 +133,7 @@ protected function duzz_renderBody() {
 
     $this->tableFactory->duzz_addChild($tbody);
 }
+
+
 
 }

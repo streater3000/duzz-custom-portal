@@ -15,7 +15,7 @@ class Duzz_ACF_Field {
         $this->project_id = $project_id;
         $this->user = wp_get_current_user();
         $this->field_name = $field_name;
-        $this->field_key = Duzz_Keys::duzz_get_acf_key($this->field_name);
+        $this->field_key = Duzz_Keys::duzz_get_saved_acf_key($this->field_name);
     }
 
 public function duzz_custom_remove_acf_labels($field, $add_placeholder = true) {

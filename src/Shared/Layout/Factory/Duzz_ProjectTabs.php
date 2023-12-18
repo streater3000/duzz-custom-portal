@@ -45,6 +45,13 @@ jQuery(document).ready(function($) {
   }
 });
 
+  document.querySelector(\'.invoice-fields-wrapper\').addEventListener(\'input\', function(event) {
+      var target = event.target;
+      if (target && (target.matches(\'input[name^="units"]\') || target.matches(\'input[name^="price"]\'))) {
+          calculateTotal();
+      }
+  });
+
 function openTab(event, tabName) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabcontent");
@@ -87,18 +94,16 @@ function setActiveTabFromUrlExtension() {
 
 
 // Set the active tab before the page loads
-if (!hasUrlExtension()) {
-  var defaultTab = document.querySelector(".tablinks[onclick*=\'Info\']");
-  if (defaultTab) {
-    defaultTab.click();
+  if (!hasUrlExtension()) {
+    var defaultTab = document.querySelector(".tablinks[onclick*=\'Info\']");
+    if (defaultTab) defaultTab.click();
+  } else {
+    setActiveTabFromUrlExtension();
   }
-} else {
-  setActiveTabFromUrlExtension();
-}
 
 function findHighestRowID() {
     var inputs = document.querySelectorAll(\'input\');
-    var highestID = -1;
+    var highestID = 0;
     for (var i = 0; i < inputs.length; i++) {
         var name = inputs[i].name;
         var matches = name.match(/\[(\d+)\]/);
@@ -112,7 +117,7 @@ if (matches) {
     return highestID;
 }
 
-var firstRowID = 0; // Initialize firstRowID to 0
+var firstRowID = 1; // Initialize firstRowID to 0
 var lastRowID = findHighestRowID(); // Initialize lastRowID to the highest ID among existing rows
 
 function formatPriceField(input) {
@@ -130,110 +135,89 @@ function bindInputEvents(input) {
 
 window.addRow = function(btn) {
     var parentRow = btn.parentNode.parentNode;
-    var table = parentRow.parentNode;
-    var rowCopy = parentRow.cloneNode(true);
-
-    // Here you reference the total row using its ID.
-    var totalRow = document.getElementById(\'total-value\').parentNode;
-        var taxRow = document.getElementById(\'tax-total-value\').parentNode;
-    var totalTaxRow = document.getElementById(\'total-tax-value\').parentNode;
-
-    var inputs = parentRow.querySelectorAll(\'input\');
-    for (var i = 0; i < inputs.length; i++) {
-        inputs[i].value = \'\';
-        // Manually dispatch the input event
-        inputs[i].dispatchEvent(new Event(\'input\'));
-    }
-
-    var select = parentRow.querySelector(\'select\');
-    var selectedIndex = select.selectedIndex;
-    select.selectedIndex = 0;
-
-    var button = rowCopy.querySelector(\'button\');
-    button.innerHTML = \'<span class="dashicons dashicons-trash"></span>\';
-    button.classList.add("remove-line-item-button");
-    button.onclick = function() {
-        this.parentNode.parentNode.remove();
-        calculateTotal();
-    };
-
+    var newRow = parentRow.cloneNode(true);
+    var lastRowID = findHighestRowID();
     var newRowID = lastRowID + 1; // Calculate the new ID based on the lastRowID
-    if (lastRowID === -1) {
-        newRowID = firstRowID; // If there are no existing rows, set newRowID to the firstRowID
+
+    // Transfer input and select values from the addRow row to the new row
+    var currentInputs = parentRow.querySelectorAll(\'input\');
+    var newInputs = newRow.querySelectorAll(\'input\');
+    currentInputs.forEach(function(input, index) {
+        newInputs[index].value = input.value; // Copy value from current to new input
+        input.value = \'\'; // Clear the current input
+        newInputs[index].name = input.name.replace(/\\[(\\d+)?\\]/, \'[\' + newRowID + \']\');
+    });
+
+    var currentSelects = parentRow.querySelectorAll(\'select\');
+    var newSelects = newRow.querySelectorAll(\'select\');
+    currentSelects.forEach(function(select, index) {
+        newSelects[index].selectedIndex = select.selectedIndex; // Copy selected index from current to new select
+        select.selectedIndex = 0; // Reset the current select
+        newSelects[index].name = select.name.replace(/\\[(\\d+)?\\]/, \'[\' + newRowID + \']\');
+    });
+
+    // Update button in the new row to be a remove button
+    var addButton = newRow.querySelector(\'button.add-line-item-button\');
+    if (addButton) {
+        addButton.innerHTML = \'<span class="dashicons dashicons-trash"></span>\';
+        addButton.classList.remove(\'add-line-item-button\');
+        addButton.classList.add(\'remove-line-item-button\');
+        addButton.onclick = function() {
+            this.parentNode.parentNode.remove();
+            calculateTotal();
+        };
     }
 
-    var inputs = rowCopy.querySelectorAll(\'input\');
-    for (var i = 0; i < inputs.length; i++) {
-        if (inputs[i].name.match(/\[\]/)) {
-            inputs[i].name = inputs[i].name.replace(/\[\]/, \'[\' + newRowID + \']\');
-        } else {
-            inputs[i].name = inputs[i].name.replace(/\[(\d+)\]/, \'[\' + newRowID + \']\');
-        }
+    // Append the new row after the addRow row
+    parentRow.parentNode.insertBefore(newRow, parentRow.nextSibling);
 
-        // Attach an event listener to the input fields
-        inputs[i].addEventListener(\'input\', calculateTotal);
-
-        // Check if the input has the class \'price-input\'
-        if (inputs[i].classList.contains(\'price-input\')) {
-            // Add onblur event to format the price
-            inputs[i].onblur = function() {
-                formatPriceField(this);
-                calculateTotal();  // Recalculate the total when price changes
-            };
-            // Format the price field immediately after the row is added
-            formatPriceField(inputs[i]);
-        }
-    }
-
-    var select = rowCopy.querySelector(\'select\');
-    if (select.name.match(/\[\]/)) {
-        select.name = select.name.replace(/\[\]/, \'[\' + newRowID + \']\');
-    } else {
-        select.name = select.name.replace(/\[(\d+)\]/, \'[\' + newRowID + \']\');
-    }
-    select.selectedIndex = selectedIndex;
-
-    table.insertBefore(rowCopy, totalRow);
-    lastRowID = newRowID; // Update lastRowID to the new ID
-    calculateTotal(); 
+    calculateTotal();
 };
 
 
+
+  // Calculate total
 function calculateTotal() {
-    var table = document.querySelector(\'.payment-form .invoice-fields-wrapper\');
-    var rows = table.querySelectorAll(\'tr\');
+    // First check and calculate any existing rows
+    var rows = document.querySelectorAll(\'.invoice-fields-wrapper tr.invoice-table-line-items-row\');
     var total = 0.0;
-            var salesTax = document.getElementById(\'sales_tax\').value;
-            var totalAfterTax = 0.0;
-    for (var i = 1; i < rows.length - 1; i++) {  // Exclude the header and total rows
-        var unitsInput = rows[i].querySelector(\'input[name^="units"]\');
-        var priceInput = rows[i].querySelector(\'input[name^="price"]\');
+    var salesTax = parseFloat(document.getElementById(\'sales_tax\').value) || 0;
+    rows.forEach(function(row) {
+        var unitsInput = row.querySelector(\'input[name^="units"]\');
+        var priceInput = row.querySelector(\'input[name^="price"]\');
         var units = unitsInput ? parseFloat(unitsInput.value) : 0;
         var price = priceInput ? parseFloat(priceInput.value) : 0;
-if (!isNaN(units)) {
-  if (!isNaN(price)) {
+        if (!isNaN(units) && !isNaN(price)) {
             total += units * price;
         }
+    });
+
+    var totalTax = total * (salesTax / 100);
+    var totalAfterTax = total + totalTax;
+
+    document.getElementById(\'total-value\').textContent = total.toFixed(2) || \'0.00\';
+    document.getElementById(\'tax-total-value\').textContent = totalTax.toFixed(2) || \'0.00\';
+    document.getElementById(\'total-tax-value\').textContent = totalAfterTax.toFixed(2) || \'0.00\';
+}
+
+// Function to bind events to inputs and selects for live calculation
+function bindEventsToInvoiceFields() {
+    // Logic to bind input events
+    document.querySelectorAll(\'.invoice-fields-wrapper input\').forEach(function(input) {
+        if (input.name.startsWith(\'units\') || input.name.startsWith(\'price\')) {
+            input.addEventListener(\'input\', calculateTotal);
+        }
+    });
+
+    var salesTaxInput = document.getElementById(\'sales_tax\');
+    if (salesTaxInput) {
+        salesTaxInput.addEventListener(\'input\', calculateTotal);
     }
 }
 
-      totalTax = total * (salesTax / 100);
-        totalAfterTax = total * (1 + salesTax / 100);
-        document.getElementById(\'total-value\').textContent = total.toFixed(2);
-              document.getElementById(\'tax-total-value\').textContent = totalTax.toFixed(2);
-        document.getElementById(\'total-tax-value\').textContent = totalAfterTax.toFixed(2);
-}
-
-
-// Attach the calculateTotal event listener to all existing inputs on page load
-document.querySelectorAll(\'input\').forEach(input => {
-    input.addEventListener(\'input\', calculateTotal);
-});
-
-// Run the total calculation once on page load
-calculateTotal();
-
+// Call the function to bind events on page load
 window.onload = function() {
+    bindEventsToInvoiceFields();
     // Get all remove buttons
     var removeButtons = document.querySelectorAll(\'.remove-line-item-button\');
     
@@ -249,6 +233,9 @@ window.onload = function() {
 
 
    document.addEventListener(\'DOMContentLoaded\', function() {
+
+    bindEventsToInvoiceFields();
+    calculateTotal();
             // Get all select elements on the page
             const selects = document.querySelectorAll(\'select\');
 

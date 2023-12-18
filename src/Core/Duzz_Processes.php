@@ -246,6 +246,11 @@ private function duzz_get_line_items($data_passer) {
     
     if($items && is_array($items)) {
         foreach($items as $id => $item) {
+            // Skip if the $id is empty
+            if (empty($id)) {
+                continue;
+            }
+
             $units = intval($this->data_passer->duzz_retrieve('POST', 'units', 'action')[$id]);
             $unit_type = sanitize_text_field($this->data_passer->duzz_retrieve('POST', 'unit_type', 'action')[$id]);
             $price = floatval($this->data_passer->duzz_retrieve('POST', 'price', 'action')[$id]);
@@ -254,6 +259,7 @@ private function duzz_get_line_items($data_passer) {
             $total_sum += $total; 
             
             $line_items[] = [
+                'id' => $id,  // Include the $id in the line item
                 'item' => sanitize_text_field($item),
                 'units' => $units,
                 'unit_type' => $unit_type,
@@ -267,68 +273,59 @@ private function duzz_get_line_items($data_passer) {
 }
 
 
-private function duzz_generate_invoice_table($invoice_name, $invoice_type, $line_items, $sales_tax) {
 
+
+private function duzz_generate_invoice_table($invoice_name, $invoice_type, $line_items, $sales_tax) {
     $project_id = $this->data_passer->duzz_retrieve('POST', 'project_id', 'action') ?? '';
 
-    // Initialize the invoice_table string
-    $invoice_table = '<div class="header-pricing-container">';
-    $invoice_table .= '<div class="invoice-feed-title">'. sanitize_text_field($invoice_type) . '</div>';  
-    $invoice_table .= '<div class="progress-sub-title">'. sanitize_text_field($invoice_name) . '</div>';  
-    $invoice_table .= '</div>';
-    $invoice_table .= '<div class="invoice-pricing-container">';
-    $invoice_table .= '<table><tbody>';
-    
-    $total_sum = 0;
-    
-    // Loop through line items and add them to the table
+    // Create an instance of the Duzz_Invoice_Table
+    $invoiceTableInstance = new \Duzz\Shared\Layout\Factory\Duzz_Invoice_Table();
+
+    // Add the header
+    $invoiceTableInstance->duzz_addHeader($invoice_type, $invoice_name, $sales_tax);
+
+    // Loop through line items and add them to the table using the duzz_addRow method
     foreach ($line_items['line_items'] as $item) {
-        $total = $item['units'] * $item['price'];
-        $total_sum += $total;
-        
-        $invoice_table .= '<tr class="pricing-invoice-header">';
-        $invoice_table .= '<td>'.sanitize_text_field($item['item']).'</td>';
-        $invoice_table .= '<td class="invoice-align-right">$'.number_format($total, 2).'</td>';
-        $invoice_table .= '</tr>';
-        $invoice_table .= '<tr class="pricing-invoice-sub">';
-        $invoice_table .= '<td>'.$item['units'].' '.sanitize_text_field($item['unit_type']).'s</td>';
-        $invoice_table .= '<td class="invoice-align-right">$'.number_format($item['price'], 2).' per '.sanitize_text_field($item['unit_type']).'</td>';
-        $invoice_table .= '</tr>';
+        $invoiceTableInstance->duzz_addRow(
+            sanitize_text_field($item['item']),
+            $item['units'],
+            sanitize_text_field($item['unit_type']),
+            $item['price']
+        );
     }
+
+    // Retrieve the total after tax
+    $total_aftertax_sum = $invoiceTableInstance->duzz_getTotalAfterTax();
+
+    // Use the duzz_render method to convert the constructed table to an HTML string
+    $invoice_table = $invoiceTableInstance->duzz_getTable();
+
+    // Create a new container to hold both the table and the button
+    $container = new \Duzz\Shared\Layout\HTML\Duzz_Return_HTML('div', ['class' => 'duzz-invoice-table-and-button']);
+    $container->duzz_addChild($invoice_table); // Add invoice table to the container
+
+if (stripos($invoice_type, 'invoice') !== false) {
+    $payNowButton = $this->stripe_checkout->duzz_generatePayNowButton($total_aftertax_sum, $project_id);
     
-    // Calculate the tax and total after tax
-    $tax_total = $total_sum * ($sales_tax / 100);
-    $total_aftertax_sum = $total_sum + $tax_total;
+    if($payNowButton instanceof \Duzz\Shared\Layout\HTML\Duzz_Return_HTML) {
+        // Wrap the button in a div container
+        $buttonContainer = new \Duzz\Shared\Layout\HTML\Duzz_Return_HTML('div', ['class' => 'duzz-button-container']);
+        $buttonContainer->duzz_addChild($payNowButton);
 
-    // Append the totals to the invoice table
-    $invoice_table .= '</tbody></table>';
-    $invoice_table .= '</div>';
-    $invoice_table .= '<div class="total-invoice-pricing-container">';
-    $invoice_table .= '<table><tbody>';
-    $invoice_table .= '<tr class="pricing-border-top">';
-    $invoice_table .= '<td>Total</td>';
-    $invoice_table .= '<td class="pricing-invoice-header invoice-align-right">$'.number_format($total_sum, 2).'</td>';
-    $invoice_table .= '</tr>';
-    $invoice_table .= '<tr class="pricing-border-top">';
-    $invoice_table .= '<td>Tax ('.sanitize_text_field($sales_tax).'%)</td>';
-    $invoice_table .= '<td class="pricing-invoice-header invoice-align-right">$'.number_format($tax_total, 2).'</td>';
-    $invoice_table .= '</tr>';
-    $invoice_table .= '<tr class="pricing-border-top-total-price">';
-    $invoice_table .= '<td>After Tax</td>';
-    $invoice_table .= '<td class="pricing-invoice-header invoice-align-right">$'.number_format($total_aftertax_sum, 2).'</td>';
-    $invoice_table .= '</tr>';
-    $invoice_table .= '</tbody></table>';
-
-    if ($invoice_type === 'Invoice'){
-    $payNowButton = $this->stripe_checkout->generatePayNowButton($total_aftertax_sum, $project_id);
-
-    $invoice_table .= $payNowButton;
-            }
-
-    $invoice_table .= '</div>';
-    
-    return $invoice_table;
+        // Add the wrapped button to the main container
+        $container->duzz_addChild($buttonContainer);
+    } else {
+        // Handle error scenario as before
+    }
 }
+
+
+    // Render the entire container and return
+    return $container->duzz_render();
+}
+
+
+
 
 
 private function duzz_handle_post_data($invoice_name, $payment_id, $invoice_type, $existing_post, $prev_invoice_type, $line_items, $sales_tax, $invoice_table) {
@@ -407,14 +404,14 @@ public function duzz_customer_add_project( $fields, $entry, $form_data, $entry_i
         // Below, we restrict output to form #9937.
 
 
-    $form_number = Duzz_Get_Data::duzz_get_form_id('duzz_client_form_id_field_data', 'form_id');
+    $form_number = Duzz_Get_Data::duzz_get_form_id('duzz_client_settings_form_id_field_data', 'form_id');
 
     if (absint($form_data['id']) !== intval($form_number)) {
         return;
     }
 
 
-    $option_name = 'duzz_client_field_numbers_field_data';
+    $option_name = 'duzz_client_settings_field_numbers_field_data';
     $saved_values = Duzz_Get_Data::duzz_get_field_names('client_field_numbers');
     $field_numbers = [];
 
@@ -431,9 +428,7 @@ public function duzz_customer_add_project( $fields, $entry, $form_data, $entry_i
     $team_id          = $fields[ intval($field_numbers['team_id']) ];
     $company_id       = $fields[ intval($field_numbers['company_id']) ];
     $website          = $fields[ intval($field_numbers['website']) ];
-
-
-
+    $customer_message = $fields[ intval($field_numbers['customer_message']) ];
 
     $customer_email_value = strtolower($fields[intval($field_numbers['customer_email'])]['value']);
 
@@ -447,6 +442,9 @@ public function duzz_customer_add_project( $fields, $entry, $form_data, $entry_i
         if ($customer_last_name_stored == $customer_last_name_submitted) {
             wp_redirect(site_url('/your-project/' . $project_id . '/'));
             Duzz_Status_Feed::duzz_add_comment_to_status_feed('Hey ' . ucwords(strtolower($customer_name['first'])) . ', ' . $welcome_back_message, $project_id);
+                if (!empty($customer_message['value'])) {
+                        Duzz_Status_Feed::duzz_add_to_status_feed($customer_message['value'], $project_id, null);
+    }
             die();
         } else {
             $redirect_url = site_url("/resend-project/?projectexists=true");
@@ -455,6 +453,9 @@ public function duzz_customer_add_project( $fields, $entry, $form_data, $entry_i
            wp_redirect($nonce_url);
 
             Duzz_Status_Feed::duzz_add_comment_to_status_feed('Hey ' . ucwords(strtolower($customer_name['first'])) . ', ' . $welcome_back_message, $project_id);
+                if (!empty($customer_message['value'])) {
+                        Duzz_Status_Feed::duzz_add_to_status_feed($customer_message['value'], $project_id, null);
+    }
             die();
         }
     }
@@ -516,6 +517,9 @@ $project_id = $tracking_id;
         $welcome_message = Duzz_Get_Data::duzz_get_form_id('duzz_settings_welcome_message_field_data', 'message');
         Duzz_Status_Feed::duzz_add_comment_to_status_feed('Hi ' . ucwords(strtolower($customer_name['first'])) . ', ' . $welcome_message, $project_id);
 
+        if (!empty($customer_message['value'])) {
+        Duzz_Status_Feed::duzz_add_to_status_feed($customer_message['value'], $project_id, null);
+    }
         Duzz_Status_Feed::duzz_add_to_status_feed( 'You Created a Project', $project_id );
 
          $admin_email_settings = Duzz_Get_Data::duzz_get_form_id('duzz_settings_email_settings_field_data', 'admin_email');
@@ -540,7 +544,7 @@ $project_id = $tracking_id;
 
 public function duzz_staff_add_project($fields, $entry, $form_data, $entry_id)
 {
-    $form_number = Duzz_Get_Data::duzz_get_form_id('duzz_admin_form_id_field_data', 'form_id');
+    $form_number = Duzz_Get_Data::duzz_get_form_id('duzz_admin_settings_form_id_field_data', 'form_id');
 
     if (absint($form_data['id']) !== intval($form_number)) {
         return;
@@ -550,7 +554,7 @@ public function duzz_staff_add_project($fields, $entry, $form_data, $entry_id)
             die('You do not have permission to perform this action.');
         }
 
-    $option_name = 'duzz_admin_field_numbers_field_data';
+    $option_name = 'duzz_admin_settings_field_numbers_field_data';
     $saved_values = Duzz_Get_Data::duzz_get_field_names('admin_field_numbers');
     $field_numbers = [];
 

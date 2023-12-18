@@ -29,10 +29,10 @@ class Duzz_Stripe_Enqueue {
             'nonce' => $ajax_nonce
         ));
 
-        $is_test_mode = Duzz_Get_Data::duzz_get_form_id('duzz_payment_settings_stripe_toggle_field_data', 'Stripe_Test_API') == 1;
+        $is_test_mode = Duzz_Get_Data::duzz_get_form_id('duzz_stripe_settings_stripe_test_toggle_field_data', 'Stripe_Test_API') == 1;
         $stripeKey = $is_test_mode ?
-            Duzz_Get_Data::duzz_get_form_id('duzz_payment_settings_stripe_test_field_data', 'API_publishable_key_test') :
-            Duzz_Get_Data::duzz_get_form_id('duzz_payment_settings_stripe_keys_field_data', 'API_publishable_key_live');
+            Duzz_Get_Data::duzz_get_form_id('duzz_stripe_settings_stripe_test_keys_field_data', 'API_publishable_key_test') :
+            Duzz_Get_Data::duzz_get_form_id('duzz_stripe_settings_stripe_keys_data_field_data', 'API_publishable_key_live');
 
         $data_to_pass = array(
             'stripeKey' => $stripeKey

@@ -14,13 +14,13 @@ class Duzz_Stripe_Checkout {
 
     public function __construct() {
         // Determine if Stripe testing is turned on
-        $is_test_mode = Duzz_Get_Data::duzz_get_form_id('duzz_payment_settings_stripe_toggle_field_data', 'Stripe_Test_API') == 1;
+        $is_test_mode = Duzz_Get_Data::duzz_get_form_id('duzz_stripe_settings_stripe_test_toggle_field_data', 'Stripe_Test_API') == 1;
 
         // Retrieve the appropriate secret key based on testing mode
         if ($is_test_mode) {
-            $this->stripeSecretKey = Duzz_Get_Data::duzz_get_form_id('duzz_payment_settings_stripe_test_field_data', 'API_secret_key_test');
+            $this->stripeSecretKey = Duzz_Get_Data::duzz_get_form_id('duzz_stripe_settings_stripe_test_keys_field_data', 'API_secret_key_test');
         } else {
-            $this->stripeSecretKey = Duzz_Get_Data::duzz_get_form_id('duzz_payment_settings_stripe_keys_field_data', 'API_secret_key_live');
+            $this->stripeSecretKey = Duzz_Get_Data::duzz_get_form_id('duzz_stripe_settings_stripe_keys_data_field_data', 'API_secret_key_live');
         }
 
         // Initialize Stripe with the fetched secret key
@@ -31,19 +31,17 @@ class Duzz_Stripe_Checkout {
 
     }
 
-   public function generatePayNowButton($amount, $project_id) {
-        $clientSecret = $this->duzz_generateStripePopupContent($amount);
+public function duzz_generatePayNowButton($amount, $project_id) {
+    $clientSecret = $this->duzz_generateStripePopupContent($amount);
 
-        // Error handling, in project we get an error message instead of a client secret
-        if (strpos($clientSecret, 'Error:') !== false) {
-            return $clientSecret;  // Return the error message directly
-        }
-
-        // Create the button
-    $invoice_table = '<button type="button" class="featherlight-stipe-trigger" data-featherlight="#stripe-popup" data-secret="' . $clientSecret . '" data-amount="' . $amount . '" data-project-id="' . $project_id . '" >Pay Now</button>';
-
-        return $invoice_table;
+    if (strpos($clientSecret, 'Error:') !== false) {
+        return $clientSecret;  // Return the error message directly
     }
+
+    $invoiceTableInstance = new \Duzz\Shared\Layout\Factory\Duzz_Invoice_Table();
+    return $invoiceTableInstance->duzz_generatePayNowButton($clientSecret, $amount, $project_id);
+}
+
 
     private function duzz_generateStripePopupContent($amount) {
         // Convert amount to cents (or smallest currency unit).
