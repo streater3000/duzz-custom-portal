@@ -126,15 +126,8 @@ public function duzz_update_duzz_fields() {
     } 
 }
 
-
-
 function duzz_add_custom_post() {
-
-    
-
-    if ($this->data_passer->duzz_retrieve('POST', 'action', 'action')  === 'custom_post_add') {
-
-
+    if ($this->data_passer->duzz_retrieve('POST', 'action', 'action') === 'custom_post_add') {
         $this->duzz_verify_nonce('custom_post_add_nonce');
 
         if (!current_user_can('publish_posts')) {
@@ -142,18 +135,15 @@ function duzz_add_custom_post() {
         }
 
         $company_id = $this->data_passer->duzz_retrieve('POST', 'company_id', 'action') ?? '';
-        
         $team_id = $this->data_passer->duzz_retrieve('POST', 'team_id', 'action') ?? '';
-        
         $staff_id = $this->data_passer->duzz_retrieve('POST', 'staff_id', 'action') ?? '';
- 
         $post_type = $this->data_passer->duzz_retrieve('POST', 'post_type', 'action') ?? '';
+        $subproject_id = $this->data_passer->duzz_retrieve('POST', 'subproject_id', 'action') ?? '';
+        $old_subproject_id = $this->data_passer->duzz_retrieve('POST', 'old_subproject_id', 'action') ?? '';
 
         // Fetch the metadata field names
         $selected_columns = Duzz_Get_Data::duzz_get_form_id('duzz_settings_list_projects_field_data', 'selected_columns');
-
         $selected_columns_data_title = Duzz_Get_Data::duzz_get_form_id('duzz_settings_list_projects_field_data', 'selected_columns_data_title');
-
         $selected_columns_data_title = $selected_columns_data_title[0];
 
         // Get the value for the title from Duzz_Data_Passer using the specified meta key for title
@@ -172,6 +162,19 @@ function duzz_add_custom_post() {
             $meta_keys[] = $selected_columns_data_title;
         }
 
+        // If $old_subproject_id is not a string, initialize it as an empty string
+        if (!is_string($old_subproject_id)) {
+            $old_subproject_id = '';
+        }
+
+        // Add the new $subproject_id to the beginning of $old_subproject_id
+        if (!empty($subproject_id)) {
+            $old_subproject_ids = explode(',', $old_subproject_id);
+            array_unshift($old_subproject_ids, $subproject_id);
+            $old_subproject_ids = array_slice($old_subproject_ids, 0, 3); // Ensure no more than 3 values
+            $old_subproject_id = implode(',', $old_subproject_ids);
+        }
+
         // Create the post and obtain the ID
         $args = [
             'post_title'  => $title,
@@ -183,6 +186,7 @@ function duzz_add_custom_post() {
                 'company_id' => $company_id,
                 'team_id'    => $team_id,
                 'staff_id'   => $staff_id,
+                'subproject_id' => $old_subproject_id
             ]
         ];
 
@@ -194,7 +198,13 @@ function duzz_add_custom_post() {
 
         // Now, insert the post with the meta data
         $post_id = wp_insert_post($args);
-        wp_redirect(site_url('/workspace/'));
+
+        if (empty($subproject_id)) {
+            wp_redirect(site_url('/workspace/'));
+        } else {
+            wp_redirect(site_url('/your-project/' . $subproject_id . '/'));
+        }
+
         exit;
     }
 }
@@ -404,15 +414,15 @@ public function duzz_customer_add_project( $fields, $entry, $form_data, $entry_i
         // Below, we restrict output to form #9937.
 
 
-    $form_number = Duzz_Get_Data::duzz_get_form_id('duzz_client_settings_form_id_field_data', 'form_id');
+    $form_number = Duzz_Get_Data::duzz_get_form_id('wp_forms_client_client_form_id_field_data', 'form_id');
 
     if (absint($form_data['id']) !== intval($form_number)) {
         return;
     }
 
 
-    $option_name = 'duzz_client_settings_field_numbers_field_data';
-    $saved_values = Duzz_Get_Data::duzz_get_field_names('client_field_numbers');
+    $option_name = 'wp_forms_client_client_field_numbers_field_data';
+        $saved_values = Duzz_Get_Data::duzz_get_field_names('wp_forms_client', 'client_field_numbers');
     $field_numbers = [];
 
     foreach ($saved_values as $saved_value) {
@@ -544,7 +554,7 @@ $project_id = $tracking_id;
 
 public function duzz_staff_add_project($fields, $entry, $form_data, $entry_id)
 {
-    $form_number = Duzz_Get_Data::duzz_get_form_id('duzz_admin_settings_form_id_field_data', 'form_id');
+    $form_number = Duzz_Get_Data::duzz_get_form_id('wp_forms_admin_admin_form_id_field_data', 'form_id');
 
     if (absint($form_data['id']) !== intval($form_number)) {
         return;
@@ -554,8 +564,8 @@ public function duzz_staff_add_project($fields, $entry, $form_data, $entry_id)
             die('You do not have permission to perform this action.');
         }
 
-    $option_name = 'duzz_admin_settings_field_numbers_field_data';
-    $saved_values = Duzz_Get_Data::duzz_get_field_names('admin_field_numbers');
+    $option_name = 'wp_forms_admin_admin_field_numbers_field_data';
+    $saved_values = Duzz_Get_Data::duzz_get_field_names('wp_forms_admin', 'admin_field_numbers');
     $field_numbers = [];
 
     foreach ($saved_values as $saved_value) {

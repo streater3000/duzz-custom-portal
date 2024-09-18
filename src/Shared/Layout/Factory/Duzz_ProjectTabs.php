@@ -195,9 +195,9 @@ function calculateTotal() {
     var totalTax = total * (salesTax / 100);
     var totalAfterTax = total + totalTax;
 
-    document.getElementById(\'total-value\').textContent = total.toFixed(2) || \'0.00\';
-    document.getElementById(\'tax-total-value\').textContent = totalTax.toFixed(2) || \'0.00\';
-    document.getElementById(\'total-tax-value\').textContent = totalAfterTax.toFixed(2) || \'0.00\';
+       document.getElementById(\'total-value\').textContent = total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById(\'tax-total-value\').textContent = totalTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById(\'total-tax-value\').textContent = totalAfterTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
 // Function to bind events to inputs and selects for live calculation

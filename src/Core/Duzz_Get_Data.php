@@ -14,11 +14,26 @@ public static function duzz_get_duzz_connector_field_data($option_name) {
     return get_option( $option_name, [] );
 }
 
+public static function duzz_get_field_names($mainCategory, $subCategory) {
+    $settings = Duzz_Admin_Menu_Items::duzz_settings_list_data();
 
-public static function duzz_get_field_names($listType) {
-        $field_data = Duzz_Admin_Menu_Items::duzz_settings_list_data($listType);
-        return array_keys($field_data);
+    if (!isset($settings[$mainCategory])) {
+        return array();
     }
+
+    if (!isset($settings[$mainCategory][$subCategory])) {
+        return array();
+    }
+
+    if (!isset($settings[$mainCategory][$subCategory]['data'])) {
+        return array();
+    }
+
+    $field_data = $settings[$mainCategory][$subCategory]['data'];
+    $field_names = array_keys($field_data);
+
+    return $field_names;
+}
 
     public static function duzz_get_field_values($option_name) {
     $field_data = get_option($option_name, []);

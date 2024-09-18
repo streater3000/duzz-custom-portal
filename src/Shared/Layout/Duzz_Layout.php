@@ -7,7 +7,9 @@ use Duzz\Shared\Layout\Pages\Duzz_WP_Forms;
 use Duzz\Shared\Layout\Pages\Duzz_Projects_Page_Content;
 use Duzz\Shared\Layout\Pages\Duzz_Customer_Page_Content;
 use Duzz\Shared\Layout\Pages\Duzz_ResendProject;
+use Duzz\Shared\Layout\Pages\Duzz_List_Pages;
 use Duzz\Shared\Layout\HTML\Duzz_Return_HTML;
+use Duzz\Shared\Layout\Factory\Duzz_Comment_List_Factory;
 
 class Duzz_Layout {
     public function __construct() {
@@ -52,14 +54,14 @@ public function duzz_register_rewrite_rules() {
         $page_content = null;
 
         if (in_array($page_id, $pages_with_sidebar)) {
-            $page_content = new Duzz_Return_HTML('div', ['class' => 'page-content-flex-container']);
+            $page_content = new Duzz_Return_HTML('div', ['class' => 'duzz-page-content-flex-container']);
 
             $side_bar = new Factory\Duzz_Side_Bar();
             $side_bar_html = $side_bar->duzz_print_menu();
 
-            $sidebar_container = new Duzz_Return_HTML('div', ['class' => 'sidebar-container']);
+            $sidebar_container = new Duzz_Return_HTML('div', ['class' => 'duzz-inner-sidebar-container']);
             $sidebar_container->duzz_addChild('div', [], $side_bar_html); 
-            $page_content->duzz_addChild('div', ['class' => 'sidebar-container'], $sidebar_container->duzz_render());                      
+            $page_content->duzz_addChild('div', ['class' => 'duzz-outer-sidebar-container'], $sidebar_container->duzz_render());                      
         }
 
     // Now continue with your switch projects.
@@ -96,14 +98,14 @@ public function duzz_register_rewrite_rules() {
                     break;
 
                 case 9926:
-                    $comment_factory = new Pages\Duzz_List_Factory("comments_list", "project", "comments", 5);
-                    $container = $comment_factory->duzz_create_list();
+                    $comment_factory = new Duzz_Comment_List_Factory("project", 5);
+                    $container = $comment_factory->duzz_render();
                     break;
 
                 case 9923:
                     // Instantiate the List_Projects class
-                    $table_factory = new Pages\Duzz_List_Factory("project_list", "project", "table", 10, "duzz_settings_list_projects_field_data", "selected_columns");
-                    $table_factory->duzz_add_list_args(null, 'archived', 0);                
+                    $table_factory = new Duzz_List_Pages("project", 10, "duzz_settings_list_projects_field_data", "selected_columns");
+                    $table_factory->duzz_add_list_args(null, 'archived', 0);              
 
                     do_action('before_create_list', $table_factory, $page_id);
                     
@@ -112,17 +114,16 @@ public function duzz_register_rewrite_rules() {
                     do_action('duzz_display_notification');
                     $notification_output = ob_get_clean();
                     
-                    $container_content = $notification_output . $table_factory->duzz_create_list();
+                    $container_content = $notification_output . $table_factory->duzz_render();
                     $container = $container_content;
                     break;
 
-
                 case 9920:
                     // Instantiate the List_Projects class
-                    $table_factory = new Pages\Duzz_List_Factory("archive_list", "project", "table", 10, "duzz_settings_list_projects_field_data", "selected_columns", false);
+                    $table_factory = new Duzz_List_Pages("project", 10, "duzz_settings_list_projects_field_data", "selected_columns", false);
                     $table_factory->duzz_add_list_args(null, 'archived', 1);
                   do_action('before_archive_list', $table_factory, $page_id);
-                    $container = $table_factory->duzz_create_list();
+                    $container = $table_factory->duzz_render();
                     break;
 
                  default:
@@ -130,10 +131,10 @@ public function duzz_register_rewrite_rules() {
                     break;
             }
          if (isset($container)) {
-            $content_container = new Duzz_Return_HTML('div', ['class' => 'content-container']);
+            $content_container = new Duzz_Return_HTML('div', ['class' => 'duzz-inner-content-container']);
             $content_container->duzz_addChild('div', [], $container);
 
-            $page_content->duzz_addChild('div', ['class' => 'content-container'], $content_container->duzz_render());
+            $page_content->duzz_addChild('div', ['class' => 'duzz-outer-content-container'], $content_container->duzz_render());
         }
 
         // Output the container

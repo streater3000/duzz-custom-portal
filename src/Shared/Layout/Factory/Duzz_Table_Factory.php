@@ -16,12 +16,15 @@ class Duzz_Table_Factory {
     private $post_url = '';
     private $post_type;
     private $include_fields;
+    private $post_id;
 
     // Update the constructor
-    public function __construct($post_type = null, $include_fields = null, $data_title = null){
+    public function __construct($post_type = null, $include_fields = null, $data_title = null, $post_id = null){
         $this->post_type = $post_type;
         $this->include_fields = $include_fields;
         $this->data_title = $data_title;
+        $this->post_id = $post_id;
+        $this->old_subproject_id = \Duzz\Core\Duzz_Helpers::duzz_get_field('subproject_id', $post_id);
     }
 
 public function duzz_addColumn($name, $options) {
@@ -103,6 +106,18 @@ public function duzz_addColumn($name, $options) {
 
         $form->duzz_addChild('input', array(
         'type' => 'hidden',
+        'name' => 'subproject_id',
+        'value' => $this->post_id,
+        ));
+
+        $form->duzz_addChild('input', array(
+        'type' => 'hidden',
+        'name' => 'old_subproject_id',
+        'value' => $this->old_subproject_id,
+        ));
+
+        $form->duzz_addChild('input', array(
+        'type' => 'hidden',
         'name' => 'data_title',
         'value' => $this->data_title,
         ));
@@ -139,6 +154,7 @@ public function duzz_addColumn($name, $options) {
                 
                 $formatted_label = ActionsNamespace\Duzz_Format_Label::duzz_format($column_name);
                 $column_class = esc_attr(str_replace('_', '-', $column_name));         
+                $column_id = esc_attr(str_replace('-', '_', $column_name));     
 
                 if (isset($column['options']['locked']) && $column['options']['locked']) {
                     // Add submit button in place of column name for locked columns in the header
@@ -151,11 +167,11 @@ public function duzz_addColumn($name, $options) {
                 } else {
                     // Create an input field inside other <th>
                     $input = new Duzz_Return_HTML('input', array(
-                        'id' => $column_class,
+                        'id' => $column_id,
                         'name' => $column_name,
                         'type' => 'text',
                         'placeholder' => $formatted_label,  
-                        'class' => 'custom-post-field-class',
+                        'class' => $column_class,
                         'data-duzz-required' => ''   
                     ));
                     $header_row->duzz_addChild('th', array('class' => $column_class), $input);

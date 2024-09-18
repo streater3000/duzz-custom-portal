@@ -161,11 +161,12 @@ public function duzz_create_form($form) {
 
 
 public function duzz_create_invoice_info_wrapper($form) {
+    // Start by calling the duzz_create_form method and get the initial form structure.
+    $form = $this->duzz_create_form($form);
 
-     // Start by calling the duzz_create_form method and get the initial form structure.
-   $form = $this->duzz_create_form($form);
-
-    $this->readonlyAttr = []; // This can be set based on your logic for making fields readonly.
+    $this->isCompleted = $this->payment_id ? $this->duzz_isPaymentCompleted($this->payment_id) : false;
+    // Set the readonly attribute based on $this->isCompleted.
+    $this->readonlyAttr = $this->isCompleted ? ['readonly' => 'readonly'] : [];
 
     $separateTable = $form->duzz_addChild('table', ['class' => 'invoice-info-wrapper']);
 
@@ -177,7 +178,7 @@ public function duzz_create_invoice_info_wrapper($form) {
 
     $invoiceDataRow = $separateTable->duzz_addChild('tr', ['class' => 'invoice-name-row']);
     $invoiceDataRow->duzz_addChild('td', ['class' => 'view-mobile-green']);
-        $this->payment_data_invoice_name = isset($this->payment_data_invoice_name) ? $this->payment_data_invoice_name : '';
+    $this->payment_data_invoice_name = isset($this->payment_data_invoice_name) ? $this->payment_data_invoice_name : '';
     $invoiceNameAttributes = array_merge([
         'type' => 'text',
         'value' => $this->payment_data_invoice_name,
@@ -189,7 +190,7 @@ public function duzz_create_invoice_info_wrapper($form) {
 
     $invoiceDataRow->duzz_addChild('td')->duzz_addChild('input', $invoiceNameAttributes);
 
-    $dropdownDisabledAttr = []; // Placeholder for your logic to disable the dropdown if needed.
+    $dropdownDisabledAttr = $this->isCompleted ? ['disabled' => 'disabled'] : [];
 
     $typeSelect = $invoiceDataRow->duzz_addChild('td')->duzz_addChild('select', array_merge([
         'name' => 'invoice_type',
@@ -210,7 +211,7 @@ public function duzz_create_invoice_info_wrapper($form) {
     $typeSelect->duzz_addChild('option', $invoiceAttributes, 'Invoice');
 
     $salesTaxWrapper = $invoiceDataRow->duzz_addChild('td')->duzz_addChild('div', ['class' => 'input-wrapper']);
-        $this->payment_data_sales_tax = isset($this->payment_data_sales_tax) ? $this->payment_data_sales_tax : '';
+    $this->payment_data_sales_tax = isset($this->payment_data_sales_tax) ? $this->payment_data_sales_tax : '';
     $salesTaxAttributes = array_merge([
         'type' => 'number',
         'value' => $this->payment_data_sales_tax,
@@ -279,23 +280,29 @@ if ($this->payment_id) {
 
 
 public function duzz_create_invoice_totals($totals_table, $div) {
-    $this->duzz_create_table_row($totals_table, 'Total', 'invoice-total-border-green', 'total-value');
-    $this->duzz_create_table_row($totals_table, 'Tax', 'invoice-total-border-green', 'tax-total-value');
-    $this->duzz_create_table_row($totals_table, 'After Tax', 'invoice-total-border-green', 'total-tax-value');
+    // Check if payment is completed
+    $this->isCompleted = $this->payment_id ? $this->duzz_isPaymentCompleted($this->payment_id) : false;
 
+    // Set the CSS class based on isCompleted
+    $tableClass = $this->isCompleted ? 'invoice-total-border-red' : 'invoice-total-border-green';
+
+    $this->duzz_create_table_row($totals_table, 'Total', $tableClass, 'total-value');
+    $this->duzz_create_table_row($totals_table, 'Tax', $tableClass, 'tax-total-value');
+    $this->duzz_create_table_row($totals_table, 'After Tax', $tableClass, 'total-tax-value');
 
     if ($this->isCompleted) {
         $div->duzz_addChild('p', ['class' => 'payment-status-text'], 'Payment Completed');
     } else {
-            if (!empty($this->project_id)) {
-        $div->duzz_addChild('input', array(
-            'class' => 'submit-payment-button',
-            'type' => 'submit',
-            'value' => 'Send',
-        ));
-            }
+        if (!empty($this->project_id)) {
+            $div->duzz_addChild('input', array(
+                'class' => 'submit-payment-button',
+                'type' => 'submit',
+                'value' => 'Send',
+            ));
+        }
     }
 }
+
 
 
 private function duzz_create_table_row($table, $label, $tdClass = '', $tdId = '', $isLastCellEmpty = true) {
@@ -303,15 +310,33 @@ private function duzz_create_table_row($table, $label, $tdClass = '', $tdId = ''
     $row->duzz_addChild('td'); // First empty cell
     $row->duzz_addChild('td'); // Second empty cell
     $row->duzz_addChild('td', ['class' => 'invoice-total-border'], $label); // Label cell
-    $row->duzz_addChild('td', ['class' => $tdClass, 'id' => $tdId], ''); // Value cell
+    $valueCell = $row->duzz_addChild('td', ['class' => $tdClass . '-td'], '');
+
+    $valueContainer = $valueCell->duzz_addChild('div', ['class' => $tdClass . '-container'], '');
+
+    // Create a new cell for the value with the class name as $tdClass . '-td'
+    
+    // Add the $ icon as a span inside the value cell
+    $valueContainer->duzz_addChild('span', ['class' => 'prepend-icon'], '$');
+    $valueContainer->duzz_addChild('div', ['class' => $tdClass, 'id' => $tdId]);
+
+
     if ($isLastCellEmpty) {
         $row->duzz_addChild('td'); // Last empty cell if required
     }
 }
 
 
-  public function duzz_get_payment_table() {
+
+
+
+public function duzz_get_payment_table() {
     // Fetch necessary data
+
+    // Initialize the form
+    $form = new HTMLNamespace\Duzz_Return_HTML('form', [
+        // Provide the necessary attributes for your form
+    ]);
 
     // Add the table for estimates and calculations
     $form = $this->duzz_create_invoice_estimate_container($form);
@@ -319,6 +344,7 @@ private function duzz_create_table_row($table, $label, $tdClass = '', $tdId = ''
     // At this point, $form should contain all the required structures for your payment table.
     // Depending on how you're using this function, you can now return the structured form.
     
-     return $form;
+    return $form;
 }
+
 }

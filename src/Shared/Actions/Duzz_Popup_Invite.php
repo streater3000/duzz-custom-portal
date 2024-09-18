@@ -38,7 +38,7 @@ class Duzz_Popup_Invite {
 
         $output = '
         <div class="flex-email">
-          <div class="account-titles">Send to: </div>&nbsp
+          <div class="account-titles">Send to: </div>
           <div class="customer-email-shortcode left-account">' . esc_html( $client_email ) . '</div>
         </div>
         <div class="invite-button invite-button-customer">

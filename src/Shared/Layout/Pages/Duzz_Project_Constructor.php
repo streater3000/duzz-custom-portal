@@ -5,6 +5,7 @@ namespace Duzz\Shared\Layout\Pages;
 use Duzz\Shared\Layout\HTML\Duzz_Return_HTML;
 use Duzz\Shared\Layout\Factory as FactoryNamespace;
 use Duzz\Shared\Actions\Duzz_Error;
+use Duzz\Shared\Layout\Factory\Duzz_Comment_List_Factory;
 
 class Duzz_Project_Constructor {
     public $container;
@@ -76,8 +77,8 @@ public function duzz_addMessage() {
         $this->bottomUpdates->duzz_addChild($comment_title_container);
         
         // Instantiate Comment_Factory and get comments HTML
-        $comment_factory = new Duzz_List_Factory("comments_list", "project", "comments", 5);
-        $comments_html = $comment_factory->duzz_create_list();
+        $comment_factory = new Duzz_Comment_List_Factory("project", 5);
+        $comments_html = $comment_factory->duzz_render();
         $this->bottomUpdates->duzz_addChild('', [], $comments_html);
         
         $this->container->duzz_addChild($this->bottomUpdates);

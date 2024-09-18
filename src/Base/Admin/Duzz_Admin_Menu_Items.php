@@ -88,11 +88,9 @@ public static function duzz_forms_acf_values_connector_callback() {
         }
     }
 
-
     public static function duzz_settings_list_data() {
         return array(
-
-        'duzz_stripe_settings' => array(
+        'stripe_settings' => array(
             'stripe_keys_data' => array(
                 'data' => array(
                     'API_secret_key_live' => '',
@@ -116,6 +114,12 @@ public static function duzz_forms_acf_values_connector_callback() {
             // Add other Stripe settings as needed...
         ),
          'duzz_settings' => array(
+            'API_keys' => array(
+                'data' => array(
+                    'duzz_license_key' => ' ',
+                ),
+                'form_type' => 'text' // specify the form type
+            ),
             'list_projects' => array(
                 'data' => array(
                     'selected_columns_data_title' => array('customer_name'),
@@ -174,7 +178,7 @@ public static function duzz_forms_acf_values_connector_callback() {
         ),
 
 
-    'duzz_client_settings' => array(
+    'wp_forms_client' => array(
             'client_field_numbers' => array(
                 'data' => array(
                     'customer_ip' => 45,
@@ -199,7 +203,7 @@ public static function duzz_forms_acf_values_connector_callback() {
             // Add other client settings as needed
         ),
 
-        'duzz_admin_settings' => array(
+        'wp_forms_admin' => array(
             'admin_field_numbers' => array(
                 'data' => array(
                     'customer_address' => 11,

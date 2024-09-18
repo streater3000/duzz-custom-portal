@@ -12,9 +12,9 @@ Instantly connect with your customers and keep the conversation going with Duzz 
 
 ## Description
 
-For urgent tech support, visit our [Tech Support](https://duzz.io/support/).
+For urgent tech support, visit our [Tech Support](https://duzzportal.com/support/).
 
-[Duzz Custom Portal](https://duzz.io/) is designed to help small service-based businesses dynamically interact with their customers right from their website. Our Stripe payments integration does what no other plugin can do: make customized payments on a project-by-project basis.
+[Duzz Custom Portal](https://duzzportal.com/) is designed to help small service-based businesses dynamically interact with their customers right from their website. Our Stripe payments integration does what no other plugin can do: make customized payments on a project-by-project basis.
 
 Let your website work for you. Engage in real-time chats, foster stronger customer relationships, and enhance your revenue potential, all in one unified platform. With Duzz Custom Portal, you're not just waiting around for contact form inquiries – you're proactively reaching out, and most importantly, offering payment flexibility that no other plugin currently offers.
 
@@ -135,7 +135,7 @@ Watch an installation tutorial video here:
 [How to install](https://youtu.be/bzF-s90oczc?si=8sE7iagQyvbVBGp1)
 
 And you can find the full documentation here: 
-[Documentation](https://duzz.io/documentation/)
+[Documentation](https://duzzportal.com/documentation/)
 
 The instructions below have since been updated.
 

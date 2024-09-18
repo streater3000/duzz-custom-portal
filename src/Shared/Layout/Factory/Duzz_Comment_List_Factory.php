@@ -13,21 +13,17 @@ class Duzz_Comment_List_Factory {
     private $list_args;
     private $post_id;
     private $user_id;
-    private $list_name;
     private $items_per_page;
     private $feed_textarea;
     private $post_type;
 
-    public function __construct($list_args, $post_id, $user_id, $items_per_page) {
-        $this->list_args = $list_args;
-        $this->user_id = $user_id;
-        $this->post_id = $post_id;   
+    public function __construct($post_type, $items_per_page) {
+
+        $this->post_type = $post_type;   
         $this->items_per_page = $items_per_page;
 
-        $this->post_type = $this->list_args['post_type'];
-        $this->meta_query = $this->list_args['meta_query'];
-        $this->list_name = $this->list_args['list_name'];
-        $this->options_name = $this->list_args['options_name'];
+        $this->post_id = get_query_var($this->post_type . '_id', false);
+        $this->user_id = get_current_user_id();
         $this->feed_textarea = new FactoryNamespace\Duzz_Feed_Textarea($this->post_id, $this->user_id, $this->post_type);
     }
 

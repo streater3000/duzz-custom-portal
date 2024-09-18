@@ -13,6 +13,16 @@ class Duzz_Class_Factory {
     ?>
     <style type="text/css">
 
+        #adminmenu a[href="admin.php?page=duzz-install-plugins"] {
+            color: #ffba00 !important;
+        }
+
+        #adminmenu a[href="admin.php?page=duzz-install-plugins"]:focus,
+        #adminmenu a[href="admin.php?page=duzz-install-plugins"]:hover {
+            background-color: #ffba00 !important; /* Custom color */
+            color: white !important;
+        }
+
 .table-td-column-width-left{
     width: 250px;
 }
@@ -212,6 +222,12 @@ textarea#message {
 function duzz_dynamic_css() {
     ?>
  <style type="text/css">
+
+
+p.field-customer_first_name {
+    margin: 0px!important;
+}
+
 
 
   .duzz-dismiss-icon {
@@ -797,7 +813,7 @@ h5{
     position: fixed!important;
 }
 
-.content-container {
+.duzz-outer-content-container {
   min-height: 300px;
 }
 /*sidebar menu design*/
@@ -954,32 +970,32 @@ background-color: #000!important;
         position: fixed !important;
 }
 
-.page-content-flex-container {
+.duzz-page-content-flex-container {
   display: flex;
   min-width: 100%;
 }
 
-.page-content-flex-container .content-container{
-    margin-left:40px;
+.duzz-page-content-flex-container .duzz-outer-content-container{
+    margin-left:22px;
 }
 
 
-.page-content-flex-container > .sidebar-container {
+.duzz-page-content-flex-container > .duzz-outer-sidebar-container {
   flex: 0 0 20%;
   max-width: 20%;
 }
 
-.page-content-flex-container > .content {
+.duzz-page-content-flex-container > .content {
   flex: 0 0 80%;
   max-width: 80%;
 }
 }
 
 @media (max-width: 850px) {
-    .page-content-flex-container > * {
+    .duzz-page-content-flex-container > * {
         flex: 1 1 100%;
 }
-.sidebar-container{
+.duzz-outer-sidebar-container{
     margin-bottom: 20px!important;
 }
 .staff-sidebar{
@@ -992,15 +1008,20 @@ background-color: #000!important;
 }
 }
 
-.content-container{
+.duzz-outer-content-container{
     width:  95%!important;
 }
 
 
-.sidebar-container{
+.duzz-outer-sidebar-container{
     padding-top: 20px!important;
 }
 
+
+.duzz-outer-sidebar-container ul{
+    margin: 0px!important;
+    padding: 0px!important;
+}
 
 /*Table design*/
 
@@ -1050,7 +1071,7 @@ border-width: 0 0 0 0!important;
 .custom-selected-tr th {
     border-width: 0 3px 3px 0;
     border: 3px solid rgb(255, 255, 255);
-    padding: 0px !important;
+    padding: 2px !important;
     border-radius: 10px !important;  
 }
 
@@ -1370,7 +1391,7 @@ textarea{
 }
 
 .featherlight-content input[type="text"]{
-    margin-bottom: 10px;
+    margin-bottom: 0px;
 }
 
 .featherlight-content input[type="text"]{
@@ -1427,8 +1448,8 @@ textarea{
 }
 
 
-
 .edit-button-position{
+    z-index: 9;
     position: absolute;
 text-align: center !important;
 right: 60px;
@@ -1441,7 +1462,6 @@ right: 60px;
  
     font-size: 17px!important;
     font-weight: 800!important;
-    margin-top: 10px;
 }
 
 .edit-button-position:hover {
@@ -2256,6 +2276,7 @@ margin-bottom:  50px;
   font-weight: 700;
   border: 3px solid;
   border-radius: 10px;
+      text-align: center;
 }
 
 input[readonly], select[disabled] {
@@ -2343,8 +2364,8 @@ input[readonly], select[disabled] {
     background-color: #d7fde7;
     border-radius: 10px!important;
     padding: 8px;
-    width: 100%!important;
-    min-width: 100%;
+    width: 98%!important;
+
     max-width: 100%;
     height: 100%!important;
     max-height: 100%!important;
@@ -2529,9 +2550,22 @@ border-radius: 10px 0px 0px 10px;
     width: 10px;
 }
 
+.invoice-total-border-red{
+    background-color: #ffc9c9;
+        padding: 6px !important;
+    border-radius: 10px !important;
+    text-align: right;
+    border: 3px solid white!important;
+    min-width: 100px;
+}
+
+.invoice-total-border-red td{
+    border: 3px solid white!important;
+}
+
 .invoice-total-border-green{
     background-color: #d7fde7;
-    padding: 8px !important;
+    padding: 6px !important;
     border-radius: 10px !important;
     text-align: right;
     border: 3px solid white!important;
@@ -2540,6 +2574,15 @@ border-radius: 10px 0px 0px 10px;
 
 .invoice-total-border-green td{
     border: 3px solid white!important;
+}
+
+
+.invoice-total-border-red-container{
+    position: relative;
+}
+
+.invoice-total-border-green-container{
+    position: relative;
 }
 
 .invoice-total-border{
@@ -2551,7 +2594,10 @@ border-radius: 10px 0px 0px 10px;
 
     .invoice-table-totals-rows td {
         display: table-cell;
+        border:1px solid rgb(0 0 0 / 0%)!important;
     }
+
+
 
 .total-invoice-pricing-container table,
 .invoice-pricing-container table {
@@ -2698,6 +2744,13 @@ table{
     background-color: white;
 }
 
+   .invoice-fields-wrapper button{
+    padding: 5px 10px !important;
+   } 
+
+.invoice-totals-wrapper td{
+    padding: 0px !important;
+}
     </style>
     <?php
 }

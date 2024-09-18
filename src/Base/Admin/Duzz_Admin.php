@@ -7,9 +7,6 @@ use Duzz\Base\Admin\Factory\Duzz_Select2_Enqueue;
 
 class Duzz_Admin {
     private static $instance = null;
-    private $menu_slug;
-
-
 
     public static function duzz_getInstance($plugin_file, $menu_slug) { 
         if (self::$instance === null) {
@@ -19,7 +16,6 @@ class Duzz_Admin {
     }
 
     public function __construct($menu_slug) {
-        $this->menu_slug = $menu_slug;
 
         if (!class_exists('WP_REST_Request')) {
             require_once ABSPATH . WPINC . '/rest-api/class-wp-rest-request.php';
@@ -70,19 +66,20 @@ public function duzz_custom_admin_bar_link($wp_admin_bar) {
 
     public function duzz_init_admin_menu() {
         // Main menu page
-        add_menu_page(
+                add_menu_page(
             'DuzzClientPortal',
             'Duzz Portal',
             'activate_plugins',
-            $this->menu_slug,
+            DUZZ_MENU_SLUG, // Use the constant for the menu slug
             function() { Duzz_Admin_Menu_Items::generic_connector_callback('duzz_settings'); },
             'dashicons-star-filled',
             2
         );
 
+
         // Hardcoded submenu page
         add_submenu_page(
-            $this->menu_slug,
+            DUZZ_MENU_SLUG,
             'ACF Keys Connector',
             'ACF Keys',
             'activate_plugins',
@@ -90,27 +87,39 @@ public function duzz_custom_admin_bar_link($wp_admin_bar) {
             array(Duzz_Admin_Menu_Items::class, 'duzz_forms_acf_values_connector_callback')
         );
 
-        // Dynamically add submenu pages
- $page_slugs = array_keys(Duzz_Admin_Menu_Items::duzz_settings_list_data());
-        foreach ($page_slugs as $slug) {
-            if ($slug !== 'duzz_settings') {
-                $title = ucwords(str_replace('_', ' ', $slug));
-                add_submenu_page(
-                    $this->menu_slug,
-                    $title,
-                    $title,
-                    'activate_plugins',
-                    $slug,
-                    function() use ($slug) { Duzz_Admin_Menu_Items::generic_connector_callback($slug); }
-                );
+
+
+
+            // Dynamically add submenu pages
+            $page_slugs = array_keys(Duzz_Admin_Menu_Items::duzz_settings_list_data());
+            foreach ($page_slugs as $slug) {
+                if ($slug !== 'duzz_settings') {
+                    $title = $this->format_title($slug);
+                    add_submenu_page(
+                        DUZZ_MENU_SLUG,
+                        $title,
+                        $title,
+                        'activate_plugins',
+                        $slug,
+                        function() use ($slug) { Duzz_Admin_Menu_Items::generic_connector_callback($slug); }
+                    );
+                }
             }
-        }
-    }
+                }     
 
-    private function format_title($slug) {
-        // Convert slug to title (customize as needed)
-        return ucwords(str_replace('_', ' ', $slug));
-    }
+            // Custom function to format the title
+            function format_title($slug) {
+                $words = explode('_', $slug);
+                $formatted_words = array_map(function($word) {
+                    // Specific case for 'wp'
+                    if (strtolower($word) === 'wp') {
+                        return 'WP';
+                    } else {
+                        return ucfirst($word);
+                    }
+                }, $words);         
 
-    // Other methods...
+                return implode(' ', $formatted_words);
+            }
+
 }

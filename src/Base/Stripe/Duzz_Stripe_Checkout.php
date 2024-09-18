@@ -14,13 +14,13 @@ class Duzz_Stripe_Checkout {
 
     public function __construct() {
         // Determine if Stripe testing is turned on
-        $is_test_mode = Duzz_Get_Data::duzz_get_form_id('duzz_stripe_settings_stripe_test_toggle_field_data', 'Stripe_Test_API') == 1;
+        $is_test_mode = Duzz_Get_Data::duzz_get_form_id('stripe_settings_stripe_test_toggle_field_data', 'Stripe_Test_API') == 1;
 
         // Retrieve the appropriate secret key based on testing mode
         if ($is_test_mode) {
-            $this->stripeSecretKey = Duzz_Get_Data::duzz_get_form_id('duzz_stripe_settings_stripe_test_keys_field_data', 'API_secret_key_test');
+            $this->stripeSecretKey = Duzz_Get_Data::duzz_get_form_id('stripe_settings_stripe_test_keys_field_data', 'API_secret_key_test');
         } else {
-            $this->stripeSecretKey = Duzz_Get_Data::duzz_get_form_id('duzz_stripe_settings_stripe_keys_data_field_data', 'API_secret_key_live');
+            $this->stripeSecretKey = Duzz_Get_Data::duzz_get_form_id('stripe_settings_stripe_keys_data_field_data', 'API_secret_key_live');
         }
 
         // Initialize Stripe with the fetched secret key
@@ -95,6 +95,8 @@ public function duzz_check_for_payment_success() {
         
         $amount = get_post_meta($payment_id, 'total_aftertax_sum', true);
         
+        $formattedAmount = '$' . number_format($amount, 2);
+
         try {
             $paymentIntent = PaymentIntent::retrieve([
                 'id' => $payment_intent_id,
@@ -103,7 +105,8 @@ public function duzz_check_for_payment_success() {
             
             if ($paymentIntent->status === 'succeeded') {
                 
-                Duzz_Status_Feed::duzz_add_to_status_feed('Payment Complete! Total payment amount: ' . $amount, $project_id);
+                Duzz_Status_Feed::duzz_add_to_status_feed('Payment Complete! Total payment amount: ' . $formattedAmount, $project_id);
+                
                 update_post_meta($payment_id, 'payment_confirm', 'Completed');
                 
                 $associated_comment_id = get_post_meta($payment_id, 'associated_comment', true);
